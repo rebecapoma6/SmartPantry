@@ -5,4 +5,5 @@ import type { Profile } from "./Profile"
 export interface SessionUser{
     user: User
     profile: Profile | null
+    role?: string
 }

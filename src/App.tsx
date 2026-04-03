@@ -1,21 +1,90 @@
-import { Button } from "@/components/ui/button"
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 
-export function App() {
+// Layouts (Aquí adentro es donde irá tu Navbar)
+// import LandingLayout from './layouts/LandingLayout';
+// import AuthLayout from './layouts/AuthLayout';
+import AppLayout from './layouts/AppLayout';
+import AuthLayout from "./layouts/AuthLayout";
+// Guardias de Seguridad (Tus escudos)
+import ProtectedRoute from "./router/ProtectedRoute";
+import PublicRoute from "./router/PublicRoute";
+import AdminRoute from "./router/AdminRoute";
+
+
+
+import RegistroPage from "./pages/RegistroPage";
+import LandingLayout from "./layouts/LandingLayout";
+import HomePage from "./pages/HomePage";
+import InventarioPage from "./pages/InventarioPage";
+
+
+// // Tus Páginas Reales
+
+// import IniciarSesionPage from './pages/IniciarSesionPage';
+// import RegistroPage from './pages/RegistroPage';
+// import InventarioPage from './pages/InventarioPage'; // Antes era ProductosSupabase
+// import PerfilUsuarioPage from './pages/PerfilUsuarioPage'; 
+// import AdminPage from "./pages/AdminPage";
+// import EstadisticasPage from "./pages/EstadisticasPage";
+
+const router = createBrowserRouter([
+  // 1. RUTA PÚBLICA GENERAL (Landing Page)
+  {
+    element: <LandingLayout />, 
+    children: [
+      { path: "/", element: <HomePage /> },
+    ],
+  },
+
+  // 2. RUTAS SOLO PARA INVITADOS (Login y Registro)
+  {
+    element: <PublicRoute />, 
+    children: [
+      {
+        element: <AuthLayout />,
+        children: [
+          //{ path: "/login", element: <IniciarSesionPage/> },
+          { path: "/registro", element: <RegistroPage/> },
+        ]
+      }
+    ]
+  },
+
+  // 3. RUTAS PROTEGIDAS (Para cualquier usuario logueado)
+  {
+    element: <ProtectedRoute />, 
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          { path: "/inventario", element: <InventarioPage/> },
+          // { path: "/estadisticas", element: <EstadisticasPage/> },
+          // { path: "/perfil", element: <PerfilUsuarioPage/>} 
+        ]
+      }
+    ]
+  },
+
+  // 4. RUTAS VIP (Solo para el Gestor / Admin)
+  {
+    element: <AdminRoute />, 
+    children: [
+      {
+        element: <AppLayout />, 
+        children: [
+          // { path: "/admin", element: <AdminPage/>}
+        ]
+      }
+    ]
+  }
+]);
+
+export default function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
-  )
+    <>
+      <Toaster position="top-center" />
+      <RouterProvider router={router} />
+    </>
+  );
 }
-
-export default App

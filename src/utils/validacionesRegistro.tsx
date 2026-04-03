@@ -1,4 +1,4 @@
-export const validaciones = (name: string, value: string, passwordOriginal?: string) => {
+export const validacionesRegistro = (name: string, value: string, passwordOriginal?: string) => {
   switch (name) {
     case "full_name":
       if (!value.trim()) return "El nombre completo es obligatorio";
