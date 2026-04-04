@@ -17,6 +17,7 @@ import RegistroPage from "./pages/RegistroPage";
 import LandingLayout from "./layouts/LandingLayout";
 import HomePage from "./pages/HomePage";
 import InventarioPage from "./pages/InventarioPage";
+import IniciarSesionPage from "./pages/IniciarSesionPage";
 
 
 // // Tus Páginas Reales
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
       {
         element: <AuthLayout />,
         children: [
-          //{ path: "/login", element: <IniciarSesionPage/> },
+          { path: "/iniciarSesion", element: <IniciarSesionPage/> },
           { path: "/registro", element: <RegistroPage/> },
         ]
       }

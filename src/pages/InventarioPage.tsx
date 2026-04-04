@@ -1,5 +1,12 @@
+import Navbar from "@/components/Navbar"
+
 export default function InventarioPage(){
     return(
-        <><h1>soy inventario</h1></>
+      
+        <>
+          <Navbar/>
+          <br /><br /><br />
+          
+        <h1>soy inventario</h1></>
     )
 }

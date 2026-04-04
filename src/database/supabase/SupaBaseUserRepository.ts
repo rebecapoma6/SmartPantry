@@ -79,6 +79,33 @@ export class SupaBaseUserRepository implements UserRepository {
     }
   }
 
+  async iniciarSesion(email: string, password: string): Promise<{ data?: SessionUser; error?: any; }> {
+     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) return { error: authError };
+    if (!authData.user) return { error: { message: 'No se recibió usuario tras login' } };
+
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (profileError) {
+      await supabase.auth.signOut();
+      return { error: profileError };
+    }
+
+    return {
+      data: {
+        user: authData.user,
+        profile: profileData,
+      },
+    };
+  }
 
   async obtenerRolUsuario(userId: string): Promise<{ data?: string | null; error?: any; }> {
     const { data: dataRole, error: fetchRoleError } = await supabase

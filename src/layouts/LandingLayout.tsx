@@ -8,7 +8,6 @@ export default function LandingLayout() {
       {/* Aquí va tu Navbar para que se vea arriba */}
       <Navbar />
       
-      {/* ¡ESTO ES VITAL! Aquí es donde React inyectará el HomePage */}
       <main className="flex-grow">
         <Outlet /> 
       </main>

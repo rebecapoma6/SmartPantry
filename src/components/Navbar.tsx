@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/useAuthStore"; // Ajusta la ruta a tu store
-import { Bell, LogOut, ShieldAlert } from "lucide-react";
+import { Bell, LogOut, ShieldAlert, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,12 +16,13 @@ import {
 import { createUserRepository } from "../database/repositories"; 
 
 export default function Navbar() {
-  const { isAuthenticated, isAdmin, clearSession } = useAuthStore();
+  const { isAuthenticated, isAdmin, clearSession,sessionUser } = useAuthStore();
   const userRepository = createUserRepository();
   const navigate = useNavigate();
+  const alertasPendientes = 2; //luego lo uso
 
-  // Más adelante, este número vendrá de calcular las fechas en tu base de datos
-  const alertasPendientes = 2; 
+  const avatar = sessionUser?.profile?.avatar_url;
+  const nombre = sessionUser?.profile?.full_name?.split(' ')[0] || 'Usuario';
 
   const handleLogout = async () => {
     const { error } = await userRepository.cerrarSesion();
@@ -33,7 +34,6 @@ export default function Navbar() {
 
   return (
     <nav className="flex items-center justify-between p-4 bg-white border-b shadow-sm fixed top-0 left-0 w-full z-50">
-      {/* Lado Izquierdo: Logo y Enlaces Principales */}
       <div className="flex items-center gap-6">
         <Link to="/" className="text-xl font-bold text-green-700">
           SmartPantry
@@ -41,6 +41,7 @@ export default function Navbar() {
 
         {/* Muestra enlaces solo si el usuario está logueado */}
         {isAuthenticated && (
+          
           <div className="hidden md:flex gap-4 text-sm font-medium text-gray-600">
             <Link to="/inventario" className="hover:text-green-600">Mi Despensa</Link>
             <Link to="/estadisticas" className="hover:text-green-600">Estadísticas</Link>
@@ -51,16 +52,31 @@ export default function Navbar() {
       {/* Lado Derecho: Acciones de Sesión o Notificaciones */}
       <div className="flex items-center gap-4">
         {isAuthenticated ? (
-          <>
+         <>
             {/* Si es Admin (Gestor), mostramos un botón especial */}
             {isAdmin && (
               <Link to="/admin">
                 <Button variant="outline" size="sm" className="hidden md:flex gap-2 text-blue-600 border-blue-200 hover:bg-blue-50">
                   <ShieldAlert className="w-4 h-4" />
-                  Panel Gestor
+                  Admin
                 </Button>
               </Link>
             )}
+
+            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5">
+              {avatar ? (
+                <img 
+                  src={avatar} 
+                  alt={`Avatar de ${nombre}`} 
+                  className="h-7 w-7 rounded-full object-cover border border-gray-200" 
+                />
+              ) : (
+                <UserCircle className="h-7 w-7 text-gray-400" />
+              )}
+              <span className="text-sm font-medium text-gray-700 hidden sm:block">
+                ¡Hola, {nombre}!
+              </span>
+            </div>
 
             {/* Campana de Notificaciones (Semáforo Inteligente) */}
             <DropdownMenu>
@@ -100,7 +116,7 @@ export default function Navbar() {
         ) : (
           /* Botones para usuarios NO logueados */
           <div className="flex items-center gap-2">
-            <Link to="/login">
+            <Link to="/iniciarSesion">
               <Button variant="ghost" className="text-green-700 hover:text-green-800 hover:bg-green-50">
                 Iniciar sesión
               </Button>
