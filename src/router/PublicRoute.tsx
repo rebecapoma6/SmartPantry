@@ -9,7 +9,7 @@ const PublicRoute = () => {
     return <Outlet />;
   }
 
-  return <Navigate to={isAdmin ? "/vistaAdmin" : "/products"} replace />;
+  return <Navigate to={isAdmin ? "/vistaAdmin" : "/inventario"} replace />;
 };
 
 export default PublicRoute;

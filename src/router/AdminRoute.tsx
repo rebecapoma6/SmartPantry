@@ -4,12 +4,12 @@ import { useAuthStore } from "../stores/useAuthStore";
 export default function AdminRoute() {
   const { isAuthenticated, isAdmin } = useAuthStore();
 
-  // Si no está logueado, lo mandamos al login
+  // si no está logueado, lo mandamos al login
   if (!isAuthenticated) return <Navigate to="/iniciarSesion" replace />;
   
-  // Si está logueado pero NO es admin, lo mandamos al home
-  if (!isAdmin) return <Navigate to="/" replace />;
+  // si está logueado pero NO es admin (osea es un usuario Usuario), lo mandamos a su inventario
+  if (!isAdmin) return <Navigate to="/inventario" replace />;
 
-  // Si pasa ambos filtros (es admin y está logueado), le mostramos la ruta
+  // si pasa ambos filtros (es admin y está logueado), le mostramos la ruta
   return <Outlet />;
 }

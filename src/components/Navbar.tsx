@@ -3,6 +3,7 @@ import { useAuthStore } from "../stores/useAuthStore"; // Ajusta la ruta a tu st
 import { Bell, LogOut, ShieldAlert, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import logo from "../image/sinfondosmartpantry.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Ajusta esta ruta según dónde tengas tu repositorio en el proyecto
 import { createUserRepository } from "../database/repositories"; 
 
 export default function Navbar() {
@@ -33,10 +33,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex items-center justify-between p-4 bg-white border-b shadow-sm fixed top-0 left-0 w-full z-50">
+<nav className="flex items-center justify-between px-4 py-3 bg-white border-b shadow-sm fixed top-0 left-0 w-full z-50">
       <div className="flex items-center gap-6">
-        <Link to="/" className="text-xl font-bold text-green-700">
-          SmartPantry
+        <Link to="/">
+      
+           <img 
+                  src={logo} 
+                  alt="logo empresa" 
+                  className="h-16 w-auto object-contain"
+                />
         </Link>
 
         {/* Muestra enlaces solo si el usuario está logueado */}

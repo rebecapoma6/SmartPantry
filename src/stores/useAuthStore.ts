@@ -19,19 +19,11 @@ const userRepository = createUserRepository();
 
 export const useAuthStore = create<AuthState>()(
 
-  // persist es un middleware de persistencia que nos permitirá
-  // guardar el storage en localStorage y permitir que si refrescamos
-  // la pestaña con el login hecho, sigamos teniéndolo hasta cerrar sesión
-
-  // persist requiere 2 parámetros, en el primero metemos la implementación
-  // y en el segundo parámetros para decidir que persistir, nombres...
   persist((set) => ({
     sessionUser: null,
     isAuthenticated: false,
     isAdmin: false,
 
-
-    // setSession: (sessionUser) => set({ sessionUser, isAuthenticated: true }),
     setSession: async (sessionUser) => {
       let isAdmin = false;
       
@@ -51,9 +43,9 @@ export const useAuthStore = create<AuthState>()(
 
   }),
   {
-    name: 'auth-v1', // localStorage.getItem('auth-v1')
+    name: 'auth-v1', 
     version: 1,
-    partialize: (state) => ({  // solo persistir lo esencial
+    partialize: (state) => ({ 
       sessionUser: state.sessionUser,
       isAuthenticated: state.isAuthenticated,
       isAdmin: state.isAdmin,

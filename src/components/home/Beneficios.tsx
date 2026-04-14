@@ -19,15 +19,12 @@ export default function Beneficios() {
           
           {/* Lado Izquierdo: Imagen */}
           <div className="w-full lg:w-1/2">
-            {/* Contenedor con bordes redondeados y sombra. 
-                Reemplaza el src con la imagen de tus pimientos de Figma */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]">
               <img 
                 src={aguacate}
                 alt="Verduras frescas y pimientos verdes" 
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
-              {/* Efecto sutil de gradiente encima de la imagen para que se vea más pro */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-overlay"></div>
             </div>
           </div>

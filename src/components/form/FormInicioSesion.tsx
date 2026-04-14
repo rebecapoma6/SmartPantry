@@ -9,96 +9,96 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface FormInicioProps {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 interface ErrorsProps {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 
 export default function FormInicioSesion() {
-    const navigate = useNavigate();
-    const setSession = useAuthStore((state) => state.setSession);
-    const userRepository = createUserRepository();
+  const navigate = useNavigate();
+  const setSession = useAuthStore((state) => state.setSession);
+  const userRepository = createUserRepository();
 
-    const [cargando, setCargando] = useState(false);
-    const [formInicio, setFormInicio] = useState<FormInicioProps>({
-        email: '',
-        password: '',
-    });
+  const [cargando, setCargando] = useState(false);
+  const [formInicio, setFormInicio] = useState<FormInicioProps>({
+    email: '',
+    password: '',
+  });
 
-    const [errors, setErrors] = useState<ErrorsProps>({
-        email: '',
-        password: '',
-    });
+  const [errors, setErrors] = useState<ErrorsProps>({
+    email: '',
+    password: '',
+  });
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFormInicio({ ...formInicio, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: '' });
-    };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormInicio({ ...formInicio, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+  };
 
-    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const error = validacionesRegistro(name, value, formInicio.password);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        const newErrors = {
-            email: validacionesRegistro('email', formInicio.email),
-            password: validacionesRegistro('password', formInicio.password),
-        };
-        setErrors(newErrors);
-
-        const hasErrors = Object.values(newErrors).some(Boolean);
-        if (hasErrors) return;
-
-        setCargando(true);
-
-        try {
-            const result = await userRepository.iniciarSesion(formInicio.email, formInicio.password);
-
-            if (result.error) {
-                toast.error('Credenciales inválidas');
-            } else if (result.data) {
-                const supabaseUser = result.data.user;
-
-                if (!supabaseUser) {
-                    toast.error('Ocurrió un error al cargar el usuario');
-                    return;
-                }
-
-                await setSession(result.data);
-                const { data: role } = result.data.profile?.id
-                    ? await userRepository.obtenerRolUsuario(result.data.profile.id)
-                    : { data: null };
-
-                const sessionData = {
-                    user: supabaseUser,
-                    profile: result.data.profile,
-                    role: role || 'Usuario' // Si no tiene, le ponemos Usuario por defecto
-                };
-
-                setSession(sessionData);
-
-                toast.success(`¡Bienvenido ${result.data.profile?.full_name}!`);
-                navigate(role === 'Admin' ? '/admin' : '/inventario');
-            }
-        } catch (err) {
-            toast.error('Ocurrió un error inesperado');
-            console.error(err);
-        } finally {
-            setCargando(false);
-        }
+    const newErrors = {
+      email: validacionesRegistro('email', formInicio.email),
+      password: validacionesRegistro('password', formInicio.password),
     };
+    setErrors(newErrors);
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto mb-8 p-6 bg-white rounded-xl shadow-sm border mt-10">
+    const hasErrors = Object.values(newErrors).some(Boolean);
+    if (hasErrors) return;
+
+    setCargando(true);
+
+    try {
+      const result = await userRepository.iniciarSesion(formInicio.email, formInicio.password);
+
+      if (result.error) {
+        toast.error('Credenciales inválidas');
+      } else if (result.data) {
+        const supabaseUser = result.data.user;
+
+        if (!supabaseUser) {
+          toast.error('Ocurrió un error al cargar el usuario');
+          return;
+        }
+
+        await setSession(result.data);
+        const { data: role } = result.data.profile?.id
+          ? await userRepository.obtenerRolUsuario(result.data.profile.id)
+          : { data: null };
+
+        const sessionData = {
+          user: supabaseUser,
+          profile: result.data.profile,
+          role: role || 'Usuario' // Si no tiene, le ponemos Usuario por defecto
+        };
+
+        setSession(sessionData);
+
+        toast.success(`¡Bienvenido ${result.data.profile?.full_name}!`);
+        navigate(role === 'Admin' ? '/admin' : '/inventario');
+      }
+    } catch (err) {
+      toast.error('Ocurrió un error inesperado');
+      console.error(err);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto mb-8 p-6 bg-white rounded-xl shadow-sm border mt-10">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-green-700">Iniciar Sesión</h2>
         <p className="text-sm text-gray-500">Ingresa a tu despensa inteligente</p>
@@ -106,15 +106,15 @@ export default function FormInicioSesion() {
 
       <div className="space-y-1">
         <Label htmlFor="email">Correo Electrónico</Label>
-        <Input 
+        <Input
           id="email"
-          name="email" 
-          type="email" 
-          placeholder="tu@correo.com" 
-          value={formInicio.email} 
-          onChange={handleChange} 
-          onBlur={handleBlur} 
-          className={errors.email ? "border-red-500" : ""} 
+          name="email"
+          type="email"
+          placeholder="tu@correo.com"
+          value={formInicio.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={errors.email ? "border-red-500" : ""}
           disabled={cargando}
         />
         {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
@@ -127,15 +127,15 @@ export default function FormInicioSesion() {
             ¿Olvidaste tu contraseña?
           </Link>
         </div>
-        <Input 
+        <Input
           id="password"
-          name="password" 
-          type="password" 
-          placeholder="Tus credenciales" 
-          value={formInicio.password} 
-          onChange={handleChange} 
-          onBlur={handleBlur} 
-          className={errors.password ? "border-red-500" : ""} 
+          name="password"
+          type="password"
+          placeholder="Mínimo 6 caracteres"
+          value={formInicio.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={errors.password ? "border-red-500" : ""}
           disabled={cargando}
         />
         {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
@@ -155,5 +155,5 @@ export default function FormInicioSesion() {
       </div>
     </form>
   );
-    
+
 }
