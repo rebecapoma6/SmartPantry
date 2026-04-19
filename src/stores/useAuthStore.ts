@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
       
       if (sessionUser.profile?.id) {
         const { data: role } = await userRepository.obtenerRolUsuario(sessionUser.profile.id);
-        isAdmin = role === 'admin';
+        isAdmin = role === 'AdminGeneral' || role === 'AdminUser';
       }
 
       set({

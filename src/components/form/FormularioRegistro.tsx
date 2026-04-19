@@ -12,7 +12,7 @@ import ImageInput from '../ui/ImageInput';
 import type { RegisterData } from '@/interfaces/Profile';
 
 interface FormDataProps {
-  full_name: string;
+  nombre: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -20,7 +20,7 @@ interface FormDataProps {
 }
 
 interface ErrorsProps {
-  full_name: string;
+  nombre: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -32,7 +32,7 @@ export default function FormularioRegistro() {
   const setSession = useAuthStore(state => state.setSession);
 
   const [formData, setFormData] = useState<FormDataProps>({
-    full_name: '',
+    nombre: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -40,7 +40,7 @@ export default function FormularioRegistro() {
   });
 
   const [errors, setErrors] = useState<ErrorsProps>({
-    full_name: '',
+    nombre: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -66,7 +66,7 @@ export default function FormularioRegistro() {
     e.preventDefault();
 
     const newErrors: ErrorsProps = {
-      full_name: validacionesRegistro("full_name", formData.full_name),
+      nombre: validacionesRegistro("nombre", formData.nombre),
       email: validacionesRegistro("email", formData.email),
       password: validacionesRegistro("password", formData.password),
       confirmPassword: validacionesRegistro("confirmPassword", formData.confirmPassword, formData.password),
@@ -77,7 +77,7 @@ export default function FormularioRegistro() {
     
     if (!hasErrors) {
       const newUser: RegisterData = {
-        full_name: formData.full_name,
+        nombre: formData.nombre,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
@@ -101,7 +101,7 @@ export default function FormularioRegistro() {
 
         if (data) {
           setSession(data);
-          toast.success(`¡Bienvenida a tu despensa, ${newUser.full_name}!`, { id: toastId });
+          toast.success(`¡Bienvenida a tu despensa, ${newUser.nombre}!`, { id: toastId });
           navigate('/inventario');
         }
 
@@ -128,9 +128,9 @@ export default function FormularioRegistro() {
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="full_name">Nombre Completo</Label>
-        <Input name="full_name" type="text" placeholder="Ej. María Pérez" value={formData.full_name} onChange={handleChange} onBlur={handleBlur} className={errors.full_name ? "border-red-500" : ""} />
-        {errors.full_name && <p className="text-red-500 text-xs">{errors.full_name}</p>}
+        <Label htmlFor="nombre">Nombre Completo</Label>
+        <Input name="nombre" type="text" placeholder="Ej. María Pérez" value={formData.nombre} onChange={handleChange} onBlur={handleBlur} className={errors.nombre ? "border-red-500" : ""} />
+        {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre}</p>}
       </div>
 
       <div className="space-y-1">

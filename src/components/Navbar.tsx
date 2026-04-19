@@ -22,7 +22,7 @@ export default function Navbar() {
   const alertasPendientes = 2; //luego lo uso
 
   const avatar = sessionUser?.profile?.avatar_url;
-  const nombre = sessionUser?.profile?.full_name?.split(' ')[0] || 'Usuario';
+  const nombre = sessionUser?.profile?.nombre?.split(' ')[0] || 'Usuario';
 
   const handleLogout = async () => {
     const { error } = await userRepository.cerrarSesion();

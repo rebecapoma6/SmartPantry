@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import type { AppRole } from "@/interfaces/Profile";
 
 interface FormInicioProps {
   email: string;
@@ -81,13 +82,18 @@ export default function FormInicioSesion() {
         const sessionData = {
           user: supabaseUser,
           profile: result.data.profile,
-          role: role || 'Usuario' // Si no tiene, le ponemos Usuario por defecto
+          role: (role as AppRole) || 'Usuario' // Si no tiene, le ponemos Usuario por defecto
         };
 
         setSession(sessionData);
 
-        toast.success(`¡Bienvenido ${result.data.profile?.full_name}!`);
-        navigate(role === 'Admin' ? '/admin' : '/inventario');
+        const nombreUsuario = result.data.profile?.nombre || 'a SmartPantry';
+        toast.success(`¡Bienvenido ${nombreUsuario}!`);
+        if (role === 'AdminGeneral') {
+          navigate('/admin');
+        }else{
+          navigate('/inventario');
+        }
       }
     } catch (err) {
       toast.error('Ocurrió un error inesperado');

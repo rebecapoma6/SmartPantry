@@ -1,6 +1,6 @@
 export const validacionesRegistro = (name: string, value: string, passwordOriginal?: string) => {
   switch (name) {
-    case "full_name":
+    case "nombre":
       if (!value.trim()) return "El nombre completo es obligatorio";
       if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value)) return "Solo se permiten letras y espacios";
       return "";

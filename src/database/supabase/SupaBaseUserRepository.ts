@@ -14,6 +14,11 @@ export class SupaBaseUserRepository implements UserRepository {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
+        options: {
+          data: {
+            nombre: data.nombre // ¡El trigger usará esto!
+          }
+        }
       });
 
       if (authError) return { error: authError };
@@ -38,38 +43,45 @@ export class SupaBaseUserRepository implements UserRepository {
           console.error("Error subiendo el avatar:", uploadError);
         } else if (uploadData) {
           avatarPublicUrl = uploadData.publicUrl;
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ avatar_url: avatarPublicUrl })
+            .eq('id', user.id);
+
+            if (updateError) console.error("Error guardando URL en perfil:", updateError);
         }
       }
 
       // el perfil en la tabla en mi tabla profiles 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .insert({
-          id: user.id,
-          full_name: data.full_name,
-          avatar_url: avatarPublicUrl
-        })
-        .select()
+        // .insert({
+        //   id: user.id,
+        //   nombre: data.nombre,
+        //   avatar_url: avatarPublicUrl
+        // })
+        .select('*')
+        .eq('id',user.id)
         .single();
 
       if (profileError) return { error: profileError };
 
       // se guardara el rol en la tabla intermedia 'user_roles'
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: user.id,
-          role: data.role || 'Usuario'
-        });
+      // const { error: roleError } = await supabase
+      //   .from('user_roles')
+      //   .insert({
+      //     user_id: user.id,
+      //     role: data.role || 'Usuario'
+      //   });
 
-      if (roleError) console.error('Error guardando el rol en user_roles:', roleError);
+      // if (roleError) console.error('Error guardando el rol en user_roles:', roleError);
 
       // Retornamos la sesión completa q guardara Zustand
       return {
         data: {
           user: authData.user,
           profile: profileData,
-          role: data.role || 'Usuario'
+          role: 'Usuario'
         }
       };
 
