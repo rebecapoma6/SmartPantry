@@ -8,9 +8,12 @@ import { Pencil, Trash2 } from "lucide-react";
 interface ProductoConCategoria {
   id: string;
   nombre: string;
+  marca: string;
+  precio: number;
   cantidad: number;
+  stock_minimo: number;
   fecha_caducidad: string;
-  categorias: {nombre: string;} | null;
+  categorias: { nombre: string; } | null;
 }
 
 export default function TablaProductos() {
@@ -20,19 +23,18 @@ export default function TablaProductos() {
 
   useEffect(() => {
     const cargarProductos = async () => {
-      const idUsuario = sessionUser?.profile?.id;
-      if (!idUsuario) return;
-
       const { data, error } = await supabase
         .from('productos')
         .select(`
           id,
           nombre,
+          marca,
+          precio,
           cantidad,
+          stock_minimo,
           fecha_caducidad,
           categorias (nombre)
         `)
-        .eq('agregado_por', idUsuario)
         .order('fecha_caducidad', { ascending: true });
 
       if (error) {
@@ -44,51 +46,104 @@ export default function TablaProductos() {
     };
 
     cargarProductos();
-  }, [sessionUser]);
+  }, []);
+
+  // Función utilitaria para dar formato a la fecha
+  const formatearFecha = (fechaOriginal: string) => {
+    if (!fechaOriginal) return '';
+    const [year, month, day] = fechaOriginal.split('-');
+    return `${day}-${month}-${year}`;
+  };
 
   if (cargando) return <div className="text-center p-10">Cargando tu despensa...</div>;
 
+  const esAdminUser = sessionUser?.role === 'AdminUser';
+  const esInvitado = sessionUser?.role === 'Invitado';
+
   return (
-    <div className="border rounded-lg bg-white shadow-sm overflow-hidden">
+    <div className="text-left">
       <Table>
-        <TableHeader className="bg-gray-50">
+        <TableHeader className="bg-muted">
           <TableRow>
-            <TableHead className="font-semibold text-gray-900">Producto</TableHead>
-            <TableHead className="font-semibold text-gray-900">Categoría</TableHead>
-            <TableHead className="font-semibold text-gray-900 text-center">Cant.</TableHead>
-            <TableHead className="font-semibold text-gray-900">Vencimiento</TableHead>
-            <TableHead className="text-right">Acciones</TableHead>
+            <TableHead className="font-semibold text-foreground">Producto</TableHead>
+            <TableHead className="font-semibold text-foreground ">Categoría</TableHead>
+            <TableHead className="font-semibold text-foreground">Marca</TableHead>
+            <TableHead className="font-semibold text-foreground ">Precio</TableHead>
+            <TableHead className="font-semibold text-foreground ">Cant.</TableHead>
+            <TableHead className="font-semibold text-foreground ">Stock Mín.</TableHead>
+            <TableHead className="font-semibold text-foreground ">Vencimiento</TableHead>
+            <TableHead className="text-right text-foreground">Acciones</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {productos.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-10 text-gray-500">
+              <TableCell
+                colSpan={7}
+                className="text-center py-10 text-muted-foreground"
+              >
                 No hay productos en tu despensa. ¡Agrega el primero!
               </TableCell>
             </TableRow>
           ) : (
             productos.map((prod) => (
-              <TableRow key={prod.id} className="hover:bg-gray-50 transition-colors">
-                <TableCell className="font-medium text-gray-800">{prod.nombre}</TableCell>
-                <TableCell>
-                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
-                    {prod.categorias?.nombre || 'Sin categoría'}
+              <TableRow
+                key={prod.id}
+                className="hover:bg-muted transition-colors"
+              >
+                <TableCell className="text-foreground">
+                  {prod.nombre}
+                </TableCell>
+
+                <TableCell className="">
+                  <span className="px-2 py-1 rounded-full bg-success text-accent-foreground text-xs font-medium border border-border">
+                    {prod.categorias?.nombre || "Sin categoría"}
                   </span>
                 </TableCell>
-                <TableCell className="text-center font-semibold">{prod.cantidad}</TableCell>
-                <TableCell>
-                  <span className="text-gray-700 font-medium">
-                    {prod.fecha_caducidad}
+
+                <TableCell className="text-foreground">
+                  {prod.marca}
+                </TableCell>
+
+                <TableCell className="tetext-foreground">
+                  {prod.precio} €
+                </TableCell>
+
+                <TableCell className="font-semibold text-foreground">
+                  {prod.cantidad}
+                </TableCell>
+
+                <TableCell className="text-muted-foreground">
+                  {prod.stock_minimo}
+                </TableCell>
+
+                <TableCell className="">
+                  <span className="text-foreground font-medium">
+                    {formatearFecha(prod.fecha_caducidad)}
                   </span>
                 </TableCell>
-                <TableCell className="text-right space-x-1">
-                  <Button variant="ghost" size="icon" className="text-blue-600 h-8 w-8">
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="text-red-600 h-8 w-8">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+
+                <TableCell className="space-x-1">
+                  {!esInvitado && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-primary h-8 w-8"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                  )}
+
+                  {esAdminUser && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive h-8 w-8"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))
@@ -96,5 +151,7 @@ export default function TablaProductos() {
         </TableBody>
       </Table>
     </div>
+
+
   );
 }

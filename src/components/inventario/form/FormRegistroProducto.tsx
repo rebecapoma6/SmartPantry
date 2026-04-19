@@ -21,11 +21,15 @@ interface Categoria {
 }
 
 
-export default function FormRegistroProducto() {
+// Cámbialo para que reciba la prop
+export default function FormRegistroProducto({ onProductoAgregado }: { onProductoAgregado?: () => void }) {
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [datosFormulario, setDatosFormulario] = useState({
         nombre: "",
+        marca: "",
+        precio: 0,
         cantidad: 1,
+        stock_minimo: 1,
         fecha_caducidad: "",
         categoria_id: ""
     });
@@ -57,22 +61,27 @@ export default function FormRegistroProducto() {
         e.preventDefault(); // evita que la pagina recargue
 
         const idUsuarioLogueado = sessionUser?.profile?.id;
+        const idFamilia = sessionUser?.profile?.familia_id;
 
-        if (!idUsuarioLogueado) {
-            alert("No hay usuario logueado. No se puede guardar.");
+        if (!idUsuarioLogueado || !idFamilia) {
+            toast.error("Faltan datos del usuario o familia. No se puede guardar.");
             return;
         }
 
         // armaos el objeto para supabase
         const productoParaSupabase = {
             nombre: datosFormulario.nombre.trim(),
+            marca: datosFormulario.marca.trim() || null,
+            precio: Number(datosFormulario.precio),
             cantidad: Number(datosFormulario.cantidad),
+            stock_minimo: Number(datosFormulario.stock_minimo),
             fecha_caducidad: datosFormulario.fecha_caducidad,
             categoria_id: datosFormulario.categoria_id ? datosFormulario.categoria_id.trim() : null,
+            familia_id: idFamilia, 
             agregado_por: idUsuarioLogueado
         };
         // insertamos en Supabase
-        const { data, error } = await supabase
+        const {error } = await supabase
             .from('productos')
             .insert([productoParaSupabase]);
 
@@ -80,27 +89,34 @@ export default function FormRegistroProducto() {
             console.error("Error completo de BD:", error);
             toast.error(`Error de BD: ${error.message} \nDetalles: ${error.details}`);
         } else {
-            console.log("Éxito:", data);
             toast.success("¡Producto guardado correctamente!");
-
+            if (onProductoAgregado) onProductoAgregado();
             // limpiamos el formulario reseteando el estado
             setDatosFormulario({
-                nombre: "",
+               nombre: "",
+                marca: "",
+                precio: 0,
                 cantidad: 1,
+                stock_minimo: 1,
                 fecha_caducidad: "",
                 categoria_id: ""
             });
         }
 
-    }
+    };
+
+    // Si es Invitado, ni siquiera mostramos el botón de agregar
+    if (sessionUser?.role === 'Invitado') return null;
+
+
     return (
         <Dialog>
-            <DialogTrigger className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            <DialogTrigger className="bg-success hover:bg-success-hover text-white flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors">
                 <Plus className="w-5 h-5" />
                 Agregar Producto
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>Nuevo Producto</DialogTitle>
                     <DialogDescription>
@@ -109,45 +125,55 @@ export default function FormRegistroProducto() {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    {/* --- Input Nombre --- */}
-                    <div className="space-y-2">
-                        <Label htmlFor="nombre">Nombre del producto</Label>
-                        <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} required />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="nombre">Nombre del producto</Label>
+                            <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="marca">Marca (Opcional)</Label>
+                            <Input id="marca" value={datosFormulario.marca} onChange={handleChange} placeholder="Ej. Gloria, Don Vittorio" />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="cantidad">Cantidad</Label>
+                            <Input id="cantidad" type="number" min="1" value={datosFormulario.cantidad} onChange={handleChange} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="stock_minimo">Stock Mín.</Label>
+                            <Input id="stock_minimo" type="number" min="1" value={datosFormulario.stock_minimo} onChange={handleChange} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="precio">Precio unit.</Label>
+                            <Input id="precio" type="number" step="0.01" min="0" value={datosFormulario.precio} onChange={handleChange} />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        {/* --- Input Cantidad --- */}
-                        <div className="space-y-2">
-                            <Label htmlFor="cantidad">Cantidad</Label>
-                            <Input id="cantidad" type="number" value={datosFormulario.cantidad} onChange={handleChange} required />
-                        </div>
-
-                        {/* --- Input Fecha --- */}
                         <div className="space-y-2">
                             <Label htmlFor="fecha_caducidad">Vencimiento</Label>
                             <Input id="fecha_caducidad" type="date" value={datosFormulario.fecha_caducidad} onChange={handleChange} required />
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="categoria_id">Categoría</Label>
+                            <select
+                                id="categoria_id"
+                                value={datosFormulario.categoria_id}
+                                onChange={handleChange}
+                                required
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                            >
+                                <option value="">Selecciona...</option>
+                                {categorias.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="categoria_id">Categoría</Label>
-                        <select
-                            id="categoria_id"
-                            value={datosFormulario.categoria_id}
-                            onChange={handleChange}
-                            required
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                        >
-                            <option value="">Selecciona una categoría...</option>
-                            {categorias.map((cat) => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.nombre}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <Button type="submit" className="bg-green-600 text-white w-full">
+                    <Button type="submit" className="bg-green-600 text-white w-full mt-2">
                         Guardar en Despensa
                     </Button>
                 </form>
