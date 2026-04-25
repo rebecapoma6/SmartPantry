@@ -1,5 +1,5 @@
 export type UUID = string;
-export type AppRole = 'AdminGeneral' | 'AdminUser' | 'Usuario' | 'Invitado';
+export type AppRole = 'AdminGeneral' | 'AdminUser' | 'Usuario' ;
 
 export interface Profile{
   id?: UUID; // Referencia a auth.users.id

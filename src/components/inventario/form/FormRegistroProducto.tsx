@@ -68,7 +68,7 @@ export default function FormRegistroProducto({ onProductoAgregado }: { onProduct
             return;
         }
 
-        // armaos el objeto para supabase
+        // armamos el objeto para supabase
         const productoParaSupabase = {
             nombre: datosFormulario.nombre.trim(),
             marca: datosFormulario.marca.trim() || null,
@@ -105,8 +105,7 @@ export default function FormRegistroProducto({ onProductoAgregado }: { onProduct
 
     };
 
-    // Si es Invitado, ni siquiera mostramos el botón de agregar
-    if (sessionUser?.role === 'Invitado') return null;
+    if (sessionUser?.role === 'AdminUser') return null;
 
 
     return (
@@ -146,7 +145,7 @@ export default function FormRegistroProducto({ onProductoAgregado }: { onProduct
                             <Input id="stock_minimo" type="number" min="1" value={datosFormulario.stock_minimo} onChange={handleChange} required />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="precio">Precio unit.</Label>
+                            <Label htmlFor="precio">Precio unitario</Label>
                             <Input id="precio" type="number" step="0.01" min="0" value={datosFormulario.precio} onChange={handleChange} />
                         </div>
                     </div>

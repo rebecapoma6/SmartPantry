@@ -48,7 +48,7 @@ export class SupaBaseUserRepository implements UserRepository {
             .update({ avatar_url: avatarPublicUrl })
             .eq('id', user.id);
 
-            if (updateError) console.error("Error guardando URL en perfil:", updateError);
+          if (updateError) console.error("Error guardando URL en perfil:", updateError);
         }
       }
 
@@ -61,7 +61,7 @@ export class SupaBaseUserRepository implements UserRepository {
         //   avatar_url: avatarPublicUrl
         // })
         .select('*')
-        .eq('id',user.id)
+        .eq('id', user.id)
         .single();
 
       if (profileError) return { error: profileError };
@@ -92,7 +92,7 @@ export class SupaBaseUserRepository implements UserRepository {
   }
 
   async iniciarSesion(email: string, password: string): Promise<{ data?: SessionUser; error?: any; }> {
-     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -111,10 +111,19 @@ export class SupaBaseUserRepository implements UserRepository {
       return { error: profileError };
     }
 
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authData.user.id)
+      .single();
+    if (roleError) {
+      console.error("Error al obtener el rol:", roleError);
+    }
     return {
       data: {
         user: authData.user,
         profile: profileData,
+        role: roleData?.role || 'Usuario'
       },
     };
   }

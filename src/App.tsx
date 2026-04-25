@@ -9,7 +9,7 @@ import AuthLayout from "./layouts/AuthLayout";
 // Guardias de Seguridad (Tus escudos)
 import ProtectedRoute from "./router/ProtectedRoute";
 import PublicRoute from "./router/PublicRoute";
-import AdminRoute from "./router/AdminRoute";
+import AdminGeneralRoute from "./router/AdminGeneralRoute";
 
 
 
@@ -18,6 +18,8 @@ import LandingLayout from "./layouts/LandingLayout";
 import HomePage from "./pages/HomePage";
 import InventarioPage from "./pages/InventarioPage";
 import IniciarSesionPage from "./pages/IniciarSesionPage";
+import AdminGeneralPage from "./pages/AdminGeneralPage";
+
 
 
 // // Tus Páginas Reales
@@ -38,7 +40,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  // 2. RUTAS SOLO PARA INVITADOS (Login y Registro)
   {
     element: <PublicRoute />, 
     children: [
@@ -69,12 +70,12 @@ const router = createBrowserRouter([
 
   // 4. RUTAS VIP (Solo para el Gestor / Admin)
   {
-    element: <AdminRoute />, 
+    element: <AdminGeneralRoute />, 
     children: [
       {
         element: <AppLayout />, 
         children: [
-          // { path: "/admin", element: <AdminPage/>}
+          { path: "/admin", element: <AdminGeneralPage/>}
         ]
       }
     ]
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <>
-      <Toaster position="top-center" />
+      <Toaster position="top-right" />
       <RouterProvider router={router} />
     </>
   );

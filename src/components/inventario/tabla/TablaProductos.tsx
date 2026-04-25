@@ -58,7 +58,6 @@ export default function TablaProductos() {
   if (cargando) return <div className="text-center p-10">Cargando tu despensa...</div>;
 
   const esAdminUser = sessionUser?.role === 'AdminUser';
-  const esInvitado = sessionUser?.role === 'Invitado';
 
   return (
     <div className="text-left">
@@ -72,7 +71,7 @@ export default function TablaProductos() {
             <TableHead className="font-semibold text-foreground ">Cant.</TableHead>
             <TableHead className="font-semibold text-foreground ">Stock Mín.</TableHead>
             <TableHead className="font-semibold text-foreground ">Vencimiento</TableHead>
-            <TableHead className="text-right text-foreground">Acciones</TableHead>
+            {esAdminUser && <TableHead className="text-right">Acciones</TableHead>}
           </TableRow>
         </TableHeader>
 
@@ -124,34 +123,22 @@ export default function TablaProductos() {
                   </span>
                 </TableCell>
 
-                <TableCell className="space-x-1">
-                  {!esInvitado && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-primary h-8 w-8"
-                    >
+                {esAdminUser && (
+                  <TableCell className="text-right space-x-1">
+                    <Button variant="ghost" size="icon" className="text-blue-600 h-8 w-8">
                       <Pencil className="w-4 h-4" />
                     </Button>
-                  )}
-
-                  {esAdminUser && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive h-8 w-8"
-                    >
+                    <Button variant="ghost" size="icon" className="text-red-600 h-8 w-8">
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                  )}
-                </TableCell>
+                  </TableCell>
+                )}
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
     </div>
-
 
   );
 }
