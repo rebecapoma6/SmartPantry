@@ -19,6 +19,7 @@ import HomePage from "./pages/HomePage";
 import InventarioPage from "./pages/InventarioPage";
 import IniciarSesionPage from "./pages/IniciarSesionPage";
 import AdminGeneralPage from "./pages/AdminGeneralPage";
+import TablaFamilias from "./components/superAdmin/TablaFamilias";
 
 
 
@@ -75,7 +76,8 @@ const router = createBrowserRouter([
       {
         element: <AppLayout />, 
         children: [
-          { path: "/admin", element: <AdminGeneralPage/>}
+          { path: "/admin", element: <AdminGeneralPage/>},
+          { path: "/admin-familias", element: <TablaFamilias/>},
         ]
       }
     ]

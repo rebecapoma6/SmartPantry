@@ -22,7 +22,12 @@ export default function TablaProductos() {
   const sessionUser = useAuthStore((state) => state.sessionUser);
 
   useEffect(() => {
+    // Si todavía no tenemos el ID de la familia en memoria, nos esperamos y no buscamos nada
+    if (!sessionUser?.profile?.familia_id) return;
+
     const cargarProductos = async () => {
+      setCargando(true);
+
       const { data, error } = await supabase
         .from('productos')
         .select(`
@@ -35,6 +40,7 @@ export default function TablaProductos() {
           fecha_caducidad,
           categorias (nombre)
         `)
+        .eq('familia_id', sessionUser.profile?.familia_id)
         .order('fecha_caducidad', { ascending: true });
 
       if (error) {
@@ -46,7 +52,7 @@ export default function TablaProductos() {
     };
 
     cargarProductos();
-  }, []);
+  }, [sessionUser?.profile?.familia_id]);
 
   // Función utilitaria para dar formato a la fecha
   const formatearFecha = (fechaOriginal: string) => {

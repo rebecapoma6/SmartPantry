@@ -1,221 +1,120 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/database/supabase/Client";
-import { Trash2 } from "lucide-react";
-
 import { useEffect, useState } from "react";
+import { supabase } from "@/database/supabase/Client";
 import toast from "react-hot-toast";
+import { Users, Home, TrendingUp } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
+import TablaFamilias from "@/components/superAdmin/TablaFamilias";
+import { SupaBasFamiliasRepository } from "@/database/supabase/SupaBasFamiliasRepository";
+
+// Datos simulados para la gráfica (Luego puedes traerlos de Supabase agrupados por mes)
+const datosCrecimiento = [
+    { mes: 'Ene', usuarios: 5, familias: 2 },
+    { mes: 'Feb', usuarios: 12, familias: 4 },
+    { mes: 'Mar', usuarios: 25, familias: 8 },
+    { mes: 'Abr', usuarios: 42, familias: 15 },
+    { mes: 'May', usuarios: 68, familias: 22 },
+    { mes: 'Jun', usuarios: 100, familias: 35 },
+];
 
 export default function AdminGeneralPage() {
-    // Estado para controlar si el popup está abierto o cerrado
-    const [modalAbierto, setModalAbierto] = useState(false);
-    const [nombreFamilia, setNombreFamilia] = useState("");
-
     const [familias, setFamilias] = useState<any[]>([]);
-
-    // Agrega estos estados arriba
-    const [familiaAEliminar, setFamiliaAEliminar] = useState<{ id: string, nombre: string } | null>(null);
+    const [stats, setStats] = useState({ totalUsuarios: 0, totalFamilias: 0, nuevosMes: 0 });
     const [confirmarEliminarAbierto, setConfirmarEliminarAbierto] = useState(false);
+    const [familiaAEliminar, setFamiliaAEliminar] = useState<{ id: string, nombre: string } | null>(null);
 
-    const cargarFamilias = async () => {
-        const { data, error } = await supabase
-            .from('familias')
-            .select('*')
-            .order('created_at', { ascending: false }); // Las más nuevas arriba
-
-        if (error) {
-            console.error("Error al cargar familias:", error);
-            toast.error("Hubo un error al cargar los datos.");
-        } else {
-            setFamilias(data || []);
-        }
-    };
-
-    useEffect(() => {
-        cargarFamilias();
-    }, []);
-    // Función de prueba (luego la conectaremos a Supabase)
-    const handleCrearFamilia = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!nombreFamilia.trim()) return;
-
+    const cargarDatos = async () => {
         try {
-            const { error } = await supabase
-                .from('familias')
-                .insert([{ nombre: nombreFamilia }]);
+            // 1. El repositorio hace la magia pesada
+            const familiasConRoles = await SupaBasFamiliasRepository.obtenerFamiliasConJefes();
+            setFamilias(familiasConRoles);
 
-            if (error) throw error;
+            // 2. Estadísticas (Contamos todo rapidito)
+            const { count: userCount } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
 
-            toast.success(`¡Familia "${nombreFamilia}" creada con éxito!`);
+            setStats({
+                totalUsuarios: userCount || 0,
+                totalFamilias: familiasConRoles.length,
+                nuevosMes: 15
+            });
 
-            setModalAbierto(false);
-            setNombreFamilia("");
-
-            // 🔥 El truco de magia: refrescamos la tabla al toque llamando a la función
-            cargarFamilias();
-
-        } catch (error: any) {
-            console.error("Error al crear familia:", error);
-            toast.error("No se pudo crear la familia. Revisa los permisos.");
+        } catch (error) {
+            console.error("Error al cargar la página:", error);
+            toast.error("Error al cargar los datos de las familias.");
         }
     };
 
-    const prepararEliminacion = (id: string, nombre: string) => {
-        setFamiliaAEliminar({ id, nombre });
-        setConfirmarEliminarAbierto(true);
-    };
+    // 🔥 ¡El useEffect se queda! Es el que arranca todo al entrar a la página
+    useEffect(() => {
+        cargarDatos();
+    }, []);
 
     const handleEliminarFamilia = async (id: string, nombre: string) => {
-
         try {
-            const { error } = await supabase
-                .from('familias')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-
-            toast.success(`¡Familia "${nombre}" eliminada correctamente!`);
-            cargarFamilias(); // Refrescamos la tabla
-        } catch (error: any) {
-            console.error("Error:", error);
-            toast.error("No se pudo eliminar.");
+            // Usamos la función de eliminar de tu repositorio para mantener el orden
+            await SupaBasFamiliasRepository.eliminarFamilia(id);
+            toast.success(`Familia "${nombre}" eliminada de la plataforma.`);
+            cargarDatos();
+        } catch (error) {
+            toast.error("No se pudo eliminar la familia.");
         } finally {
-            setConfirmarEliminarAbierto(false); // Cerramos el modal pase lo que pase
+            setConfirmarEliminarAbierto(false);
             setFamiliaAEliminar(null);
         }
     };
-
-    const formatearFecha = (fechaString: string) => {
-        if (!fechaString) return "";
-        const fecha = new Date(fechaString);
-        const dia = String(fecha.getDate()).padStart(2, '0');
-        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-        const anio = fecha.getFullYear();
-        return `${dia}-${mes}-${anio}`;
-    };
     return (
-
-        <div className="p-6 pt-24 max-w-7xl mx-auto space-y-6">
-
-            {/* CABECERA Y MODAL */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-gray-900">Gestión de Familias</h1>
-
-
-
-                <Dialog open={confirmarEliminarAbierto} onOpenChange={setConfirmarEliminarAbierto}>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2 text-red-600">
-                            
-                                ¿Confirmar eliminación?
-                            </DialogTitle>
-                            <DialogDescription className="py-4">
-                                Estás a punto de eliminar a la <strong>{familiaAEliminar?.nombre}</strong>.
-                                Esta acción borrará todos sus productos y miembros asociados. No hay marcha atrás.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter className="flex gap-2 sm:gap-0">
-                            <Button
-                                variant="outline"
-                                onClick={() => setConfirmarEliminarAbierto(false)}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                className="bg-red-600 hover:bg-red-700 text-white"
-                                onClick={() => {
-                                    if (familiaAEliminar) {
-                                        handleEliminarFamilia(familiaAEliminar.id, familiaAEliminar.nombre);
-                                    }
-                                }}
-                            >
-                                Sí, eliminar familia
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
-
-                <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
-                    <DialogTrigger className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                        + Añadir Familia
-                    </DialogTrigger>
-
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle>Registrar Nueva Familia</DialogTitle>
-                        </DialogHeader>
-
-                        <form onSubmit={handleCrearFamilia} className="space-y-4 mt-4">
-                            <div>
-                                <label className="text-sm font-medium text-gray-700">Nombre de la Familia</label>
-                                <Input
-                                    placeholder="Ej. Familia Gómez"
-                                    value={nombreFamilia}
-                                    onChange={(e) => setNombreFamilia(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-                                Guardar
-                            </Button>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+        <div className="p-6 pt-24 max-w-7xl mx-auto space-y-8 bg-slate-50 min-h-screen">
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900">SmartPantry</h1>
+                    <p className="text-slate-500 mt-1">Panel de Control para Súper Administrador</p>
+                </div>
             </div>
 
-            {/* TABLA DINÁMICA CONECTADA A TU ESTADO */}
-            <div className="bg-white rounded-md shadow border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>ID de Familia</TableHead>
-                            <TableHead>Nombre</TableHead>
-                            <TableHead>Fecha de Creación</TableHead>
-                            <TableHead className="text-right">Acciones</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {/* Si no hay datos, mostramos un mensaje bonito */}
-                        {familias.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center text-gray-500 py-6">
-                                    No hay familias registradas todavía. ¡Crea la primera!
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            /* Si hay datos, los mapeamos (dibujamos) uno por uno */
-                            familias.map((familia) => (
-                                <TableRow key={familia.id}>
-                                    <TableCell className="font-mono text-xs text-gray-500">
-                                        {familia.id.split('-')[0]}... {/* Recortamos el UUID para que no ocupe toda la pantalla */}
-                                    </TableCell>
-                                    <TableCell className="font-medium">{familia.nombre}</TableCell>
-                                    <TableCell>{formatearFecha(familia.created_at)}</TableCell>
-                                    <TableCell className="text-right">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() => prepararEliminacion(familia.id, familia.nombre)}
-                                            title="Eliminar familia"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
+            {/* ESTADÍSTICAS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-xl text-blue-600"><Users /></div>
+                    <div><p className="text-sm text-slate-500">Usuarios</p><p className="text-2xl font-bold">{stats.totalUsuarios}</p></div>
+                </CardContent></Card>
+                <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
+                    <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600"><Home /></div>
+                    <div><p className="text-sm text-slate-500">Familias Activas</p><p className="text-2xl font-bold">{stats.totalFamilias}</p></div>
+                </CardContent></Card>
+                <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
+                    <div className="p-3 bg-purple-100 rounded-xl text-purple-600"><TrendingUp /></div>
+                    <div><p className="text-sm text-slate-500">Nuevos</p><p className="text-2xl font-bold">+{stats.nuevosMes}</p></div>
+                </CardContent></Card>
             </div>
+
+            <div className="space-y-4">
+                <h2 className="text-xl font-bold text-slate-800">Listado Maestro de Familias</h2>
+                {/* LLAMADA A LA TABLA */}
+                <TablaFamilias
+                    familias={familias}
+                    onPrepararEliminacion={(id, nombre) => {
+                        setFamiliaAEliminar({ id, nombre });
+                        setConfirmarEliminarAbierto(true);
+                    }}
+                />
+            </div>
+
+            {/* MODAL ELIMINAR */}
+            <Dialog open={confirmarEliminarAbierto} onOpenChange={setConfirmarEliminarAbierto}>
+                <DialogContent>
+                    <DialogHeader><DialogTitle className="text-rose-600">¿Eliminar familia?</DialogTitle></DialogHeader>
+                    <p className="py-4 text-slate-600">Vas a eliminar a la <strong>{familiaAEliminar?.nombre}</strong>. Esta acción no se puede deshacer.</p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setConfirmarEliminarAbierto(false)}>Cancelar</Button>
+                        <Button className="bg-rose-600 hover:bg-rose-700 text-white" onClick={() => { if (familiaAEliminar) handleEliminarFamilia(familiaAEliminar.id, familiaAEliminar.nombre); }}>Confirmar</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
-
-
