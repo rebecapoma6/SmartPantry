@@ -105,7 +105,7 @@ export default function FormRegistroProducto({ onProductoAgregado }: { onProduct
 
     };
 
-    if (sessionUser?.role === 'AdminUser') return null;
+
 
 
     return (

@@ -16,7 +16,9 @@ export class SupaBaseUserRepository implements UserRepository {
         password: data.password,
         options: {
           data: {
-            nombre: data.nombre // ¡El trigger usará esto!
+            nombre: data.nombre, // ¡El trigger usará esto!
+            movil: data.movil,                  
+            invite_familia_id: data.invite_familia_id
           }
         }
       });

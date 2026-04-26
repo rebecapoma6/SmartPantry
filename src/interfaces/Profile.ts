@@ -9,6 +9,7 @@ export interface Profile{
   avatar_file?: File |null; // Útil en el frontend cuando el usuario sube la foto
   role?: AppRole; 
   created_at?: string; // Recuerda que al mostrarlo en pantalla usaremos el formato dd-mm-yyyy
+  movil?: string;
 }
 
 
@@ -16,4 +17,5 @@ export interface RegisterData extends Profile {
   email: string;
   password: string;
   confirmPassword: string;
+  invite_familia_id?: string | null;
 }

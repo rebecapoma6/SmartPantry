@@ -79,11 +79,13 @@ export default function Navbar() {
         {isAuthenticated ? (
          <>
             {/* 3. Etiqueta visual para saber quién es quién */}
-            <Badge variant="outline" className="hidden md:flex bg-gray-50 text-gray-500 border-gray-200">
-                {rol === 'AdminGeneral' ? 'Súper Admin' : rol === 'AdminUser' ? 'Gestor' : 'Miembro'}
+            <Badge className="hidden md:flex bg-gray-50 text-gray-500 border-gray-200">
+                {rol === 'AdminGeneral' ? 'Súper Admin' : rol === 'AdminUser' ? 'Admin Usuario' : 'Miembro'}
             </Badge>
+           
 
-            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5">
+            <div className="flex items-center gap-2">
+              
               {avatar ? (
                 <img 
                   src={avatar} 
@@ -94,9 +96,11 @@ export default function Navbar() {
                 <UserCircle className="h-7 w-7 text-gray-400" />
               )}
               <span className="text-sm font-medium text-gray-700 hidden sm:block">
-                ¡Hola, {nombre}!
+                Hola, {nombre}
               </span>
+              
             </div>
+            
 
             {/* Ocultamos la campana si es Súper Admin (él no tiene productos que caduquen) */}
             {rol !== 'AdminGeneral' && (
