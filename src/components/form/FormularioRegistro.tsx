@@ -29,7 +29,7 @@ interface ErrorsProps {
 
 export default function FormularioRegistro() {
   const [searchParams] = useSearchParams();
-  const codigoInvitacion = searchParams.get("invite");
+  const codigoInvitacion = searchParams.get("familia");
 
   const navigate = useNavigate();
   const userRepository = createUserRepository();

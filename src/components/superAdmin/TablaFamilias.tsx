@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { Trash2, Users } from "lucide-react";
-import { formatearIniciales } from "@/utils/formatearIniciales";
+import { formatearIniciales } from "@/utils/formatear";
 
 interface TablaProps {
   familias: any[];

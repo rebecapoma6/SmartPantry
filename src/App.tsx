@@ -18,8 +18,10 @@ import LandingLayout from "./layouts/LandingLayout";
 import HomePage from "./pages/HomePage";
 import InventarioPage from "./pages/InventarioPage";
 import IniciarSesionPage from "./pages/IniciarSesionPage";
-import AdminGeneralPage from "./pages/AdminGeneralPage";
-import TablaFamilias from "./components/superAdmin/TablaFamilias";
+import AdminGeneralPage from "./pages/SAdminGeneralPage";
+import SAdminFamiliasPage from "./pages/SAdminFamiliasPage";
+import PerfilSuperAdmin from "./pages/PerfilSuperAdmin";
+import AdminUserPage from "./pages/AdminUserPage";
 
 
 
@@ -63,7 +65,7 @@ const router = createBrowserRouter([
         children: [
           { path: "/inventario", element: <InventarioPage/> },
           // { path: "/estadisticas", element: <EstadisticasPage/> },
-          // { path: "/perfil", element: <PerfilUsuarioPage/>} 
+          { path: "/perfil", element: <AdminUserPage/>} 
         ]
       }
     ]
@@ -77,7 +79,8 @@ const router = createBrowserRouter([
         element: <AppLayout />, 
         children: [
           { path: "/admin", element: <AdminGeneralPage/>},
-          { path: "/admin-familias", element: <TablaFamilias/>},
+          { path: "/tablas-superAdmin", element: <SAdminFamiliasPage/>},
+          { path: "/perfil-superAdmin", element: <PerfilSuperAdmin/>},
         ]
       }
     ]

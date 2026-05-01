@@ -50,10 +50,20 @@ export default function Navbar() {
             
             {/* Si es el Súper Admin, ve esto: */}
             {rol === 'AdminGeneral' ? (
+              <>
               <Link to="/admin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
+                <ShieldAlert className="w-4 h-4" />
+                DashBoard SmarthPantry
+              </Link>
+                <Link to="/tablas-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
                 <ShieldAlert className="w-4 h-4" />
                 Gestión de Familias
               </Link>
+                <Link to="/perfil-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
+                <ShieldAlert className="w-4 h-4" />
+                Perfil Super Administrador
+              </Link>
+              </>
             ) : (
               /* Si es AdminUser o Usuario, ven esto: */
               <>
@@ -62,7 +72,7 @@ export default function Navbar() {
                 
                 {/* Botón extra EXCLUSIVO para el jefe de la casa */}
                 {rol === 'AdminUser' && (
-                  <Link to="/mi-familia" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2">
+                  <Link to="/perfil" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2">
                     <Users className="w-4 h-4" />
                     Mi Familia
                   </Link>

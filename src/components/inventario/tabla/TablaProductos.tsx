@@ -3,7 +3,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/database/supabase/Client";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Pencil, Trash2 } from "lucide-react";
+import { MinusCircle, Pencil, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { formatearFecha } from "@/utils/formatear";
 
 interface ProductoConCategoria {
   id: string;
@@ -16,29 +18,26 @@ interface ProductoConCategoria {
   categorias: { nombre: string; } | null;
 }
 
-export default function TablaProductos() {
+
+interface TablaProductosProps {
+  onEditarProducto: (producto: ProductoConCategoria) => void;
+  onEliminarProducto: (producto: ProductoConCategoria) => void;
+}
+
+export default function TablaProductos({ onEditarProducto, onEliminarProducto }: TablaProductosProps) {
   const [productos, setProductos] = useState<ProductoConCategoria[]>([]);
   const [cargando, setCargando] = useState(true);
   const sessionUser = useAuthStore((state) => state.sessionUser);
 
   useEffect(() => {
-    // Si todavía no tenemos el ID de la familia en memoria, nos esperamos y no buscamos nada
     if (!sessionUser?.profile?.familia_id) return;
 
     const cargarProductos = async () => {
       setCargando(true);
-
       const { data, error } = await supabase
         .from('productos')
         .select(`
-          id,
-          nombre,
-          marca,
-          precio,
-          cantidad,
-          stock_minimo,
-          fecha_caducidad,
-          categorias (nombre)
+          id, nombre, marca, precio, cantidad, stock_minimo, fecha_caducidad, categorias (nombre)
         `)
         .eq('familia_id', sessionUser.profile?.familia_id)
         .order('fecha_caducidad', { ascending: true });
@@ -54,11 +53,40 @@ export default function TablaProductos() {
     cargarProductos();
   }, [sessionUser?.profile?.familia_id]);
 
-  // Función utilitaria para dar formato a la fecha
-  const formatearFecha = (fechaOriginal: string) => {
-    if (!fechaOriginal) return '';
-    const [year, month, day] = fechaOriginal.split('-');
-    return `${day}-${month}-${year}`;
+
+
+  // 🔥 MAGIA 1: Función de Consumo Rápido (-1)
+  const handleDescontar = async (id: string, cantidadActual: number, nombre: string) => {
+    if (cantidadActual <= 0) {
+      toast.error(`¡Ya no queda ${nombre} en la despensa!`);
+      return;
+    }
+
+    const nuevaCantidad = cantidadActual - 1;
+
+    // Actualizamos en Supabase
+    const { error } = await supabase
+      .from('productos')
+      .update({ cantidad: nuevaCantidad })
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Error al descontar el producto.");
+    } else {
+      // Actualizamos el estado local al toque sin recargar toda la tabla
+      setProductos((prev) =>
+        prev.map((prod) =>
+          prod.id === id ? { ...prod, cantidad: nuevaCantidad } : prod
+        )
+      );
+      toast.success(`Se descontó 1 de ${nombre}`);
+    }
+  };
+
+  const getSemaforoColor = (cantidad: number, stockMinimo: number) => {
+    if (cantidad === 0) return "bg-red-100 hover:bg-red-200 transition-colors"; // Agotado (Rojo)
+    if (cantidad <= stockMinimo) return "bg-amber-50 hover:bg-amber-100 transition-colors"; // Crítico (Naranja)
+    return "hover:bg-muted transition-colors"; // Todo ok (Blanco/Gris)
   };
 
   if (cargando) return <div className="text-center p-10">Cargando tu despensa...</div>;
@@ -66,28 +94,26 @@ export default function TablaProductos() {
   const esAdminUser = sessionUser?.role === 'AdminUser';
 
   return (
-    <div className="text-left">
+    <div className="text-left bg-white rounded-md border shadow-sm overflow-hidden">
       <Table>
         <TableHeader className="bg-muted">
           <TableRow>
             <TableHead className="font-semibold text-foreground">Producto</TableHead>
-            <TableHead className="font-semibold text-foreground ">Categoría</TableHead>
+            <TableHead className="font-semibold text-foreground">Categoría</TableHead>
             <TableHead className="font-semibold text-foreground">Marca</TableHead>
-            <TableHead className="font-semibold text-foreground ">Precio</TableHead>
-            <TableHead className="font-semibold text-foreground ">Cant.</TableHead>
-            <TableHead className="font-semibold text-foreground ">Stock Mín.</TableHead>
-            <TableHead className="font-semibold text-foreground ">Vencimiento</TableHead>
-            {esAdminUser && <TableHead className="text-right">Acciones</TableHead>}
+            <TableHead className="font-semibold text-foreground">Precio</TableHead>
+            <TableHead className="font-semibold text-foreground text-center">Cant.</TableHead>
+            <TableHead className="font-semibold text-foreground text-center">Stock Mín.</TableHead>
+            <TableHead className="font-semibold text-foreground">Vencimiento</TableHead>
+            {/* La columna Acciones ahora la ven todos */}
+            <TableHead className="text-right font-semibold text-foreground">Acciones</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {productos.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="text-center py-10 text-muted-foreground"
-              >
+              <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
                 No hay productos en tu despensa. ¡Agrega el primero!
               </TableCell>
             </TableRow>
@@ -95,56 +121,68 @@ export default function TablaProductos() {
             productos.map((prod) => (
               <TableRow
                 key={prod.id}
-                className="hover:bg-muted transition-colors"
+                // Aplicamos el semáforo al fondo de la fila
+                className={getSemaforoColor(prod.cantidad, prod.stock_minimo)}
               >
-                <TableCell className="text-foreground">
+                <TableCell className="text-foreground font-medium">
                   {prod.nombre}
                 </TableCell>
 
-                <TableCell className="">
-                  <span className="px-2 py-1 rounded-full bg-success text-accent-foreground text-xs font-medium border border-border">
+                <TableCell>
+                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium border border-green-200">
                     {prod.categorias?.nombre || "Sin categoría"}
                   </span>
                 </TableCell>
 
-                <TableCell className="text-foreground">
-                  {prod.marca}
-                </TableCell>
+                <TableCell className="text-foreground">{prod.marca || "-"}</TableCell>
 
-                <TableCell className="tetext-foreground">
-                  {prod.precio} €
-                </TableCell>
+                <TableCell className="text-foreground">{prod.precio} €</TableCell>
 
-                <TableCell className="font-semibold text-foreground">
+                {/* Resaltamos la cantidad si está en cero */}
+                <TableCell className={`text-center font-bold ${prod.cantidad === 0 ? 'text-red-600' : 'text-foreground'}`}>
                   {prod.cantidad}
                 </TableCell>
 
-                <TableCell className="text-muted-foreground">
+                <TableCell className="text-center text-muted-foreground">
                   {prod.stock_minimo}
                 </TableCell>
 
-                <TableCell className="">
+                <TableCell>
                   <span className="text-foreground font-medium">
                     {formatearFecha(prod.fecha_caducidad)}
                   </span>
                 </TableCell>
 
-                {esAdminUser && (
-                  <TableCell className="text-right space-x-1">
-                    <Button variant="ghost" size="icon" className="text-blue-600 h-8 w-8">
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-red-600 h-8 w-8">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </TableCell>
-                )}
+                <TableCell className="text-right space-x-1 min-w-[120px]">
+                  {/* BOTÓN DE CONSUMO (-1) DISPONIBLE PARA TODOS */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700 h-8 w-8 mr-2"
+                    onClick={() => handleDescontar(prod.id, prod.cantidad, prod.nombre)}
+                    disabled={prod.cantidad === 0}
+                    title="Consumir 1 unidad"
+                  >
+                    <MinusCircle className="w-4 h-4" />
+                  </Button>
+
+                  {/* BOTONES DE EDICIÓN SOLO PARA EL GESTOR */}
+                  {esAdminUser && (
+                    <>
+                      <Button variant="ghost" size="icon" className="text-blue-600 h-8 w-8" title="Editar producto" onClick={() => onEditarProducto(prod)}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-red-600 h-8 w-8" title="Eliminar producto" onClick={() => onEliminarProducto(prod)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
     </div>
-
   );
 }

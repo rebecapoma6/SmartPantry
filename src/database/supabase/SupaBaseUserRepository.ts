@@ -29,6 +29,7 @@ export class SupaBaseUserRepository implements UserRepository {
       const user = authData.user;
       let avatarPublicUrl = null;
 
+      await new Promise(resolve => setTimeout(resolve, 800));
       // Aqui nos permite subir la imagen al Storage usando el repository
       if (data.avatar_file) {
         const fileExt = data.avatar_file.name.split('.').pop();
@@ -57,11 +58,6 @@ export class SupaBaseUserRepository implements UserRepository {
       // el perfil en la tabla en mi tabla profiles 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        // .insert({
-        //   id: user.id,
-        //   nombre: data.nombre,
-        //   avatar_url: avatarPublicUrl
-        // })
         .select('*')
         .eq('id', user.id)
         .single();
@@ -69,21 +65,20 @@ export class SupaBaseUserRepository implements UserRepository {
       if (profileError) return { error: profileError };
 
       // se guardara el rol en la tabla intermedia 'user_roles'
-      // const { error: roleError } = await supabase
-      //   .from('user_roles')
-      //   .insert({
-      //     user_id: user.id,
-      //     role: data.role || 'Usuario'
-      //   });
+      const { data: roleData} = await supabase
+        .from('user_roles')
+       .select('role')
+        .eq('user_id', user.id)
+        .single();
 
       // if (roleError) console.error('Error guardando el rol en user_roles:', roleError);
 
       // Retornamos la sesión completa q guardara Zustand
       return {
-        data: {
+       data: {
           user: authData.user,
           profile: profileData,
-          role: 'Usuario'
+          role: roleData?.role || 'Usuario' // Aquí ya vendrá como AdminUser si no traía invitación!
         }
       };
 
