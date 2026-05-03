@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+// 🔥 1. IMPORTAMOS EL STORE GLOBAL
+import { useAuthStore } from "@/stores/useAuthStore";
+
 export default function MiPerfil() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -18,7 +21,10 @@ export default function MiPerfil() {
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
 
-  // 🔥 Lógica de validación en tiempo real para la contraseña
+  // 🔥 2. TRAEMOS LAS FUNCIONES MAGICAS DE ZUSTAND
+  const updateUserName = useAuthStore((state: any) => state.updateUserName);
+  const updateUserAvatar = useAuthStore((state: any) => state.updateUserAvatar);
+
   const contrasenasCoinciden = nuevaPassword === confirmarPassword && nuevaPassword.length > 0;
   const mostrarErrorPass = confirmarPassword.length > 0 && nuevaPassword !== confirmarPassword;
   const botonPasswordDeshabilitado = nuevaPassword.length < 6 || !contrasenasCoinciden;
@@ -67,7 +73,13 @@ export default function MiPerfil() {
         .eq('id', userId);
 
       if (error) throw error;
+      
       toast.success("¡Datos actualizados con éxito!", { id: toastId });
+      
+      // 🔥 3. AQUÍ LE PASAMOS LA VOZ AL NAVBAR PARA EL NOMBRE
+      updateUserName(nombre);
+      console.log("Navbar avisado del cambio de nombre a:", nombre);
+
     } catch (error) {
       toast.error("Error al guardar los datos", { id: toastId });
     }
@@ -81,7 +93,9 @@ export default function MiPerfil() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
-      const filePath = fileName;
+      
+      // Con la ruta de la carpeta para respetar tus políticas de Supabase
+      const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
@@ -100,6 +114,11 @@ export default function MiPerfil() {
 
       setAvatarUrl(publicUrl);
       toast.success("¡Avatar actualizado!", { id: toastId });
+      
+      // 🔥 4. AQUÍ LE PASAMOS LA VOZ AL NAVBAR PARA LA FOTO
+      updateUserAvatar(publicUrl);
+      console.log("Navbar avisado del cambio de avatar:", publicUrl);
+
     } catch (error) {
       console.error("Error subiendo avatar:", error);
       toast.error("Error al subir la imagen. Verifica tu Storage.", { id: toastId });
@@ -168,7 +187,6 @@ export default function MiPerfil() {
         {/* COLUMNA DERECHA: FORMULARIOS */}
         <div className="lg:col-span-8 space-y-4">
           
-          {/* Tarjeta de Datos Personales (Igual que antes) */}
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
               <CardTitle className="text-base flex items-center gap-2 text-slate-800">
@@ -203,7 +221,6 @@ export default function MiPerfil() {
             </CardContent>
           </Card>
 
-          {/* Tarjeta de Seguridad (CON VALIDACIÓN VISUAL) */}
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
@@ -233,7 +250,6 @@ export default function MiPerfil() {
                   <div className="space-y-1.5 relative">
                     <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider flex justify-between">
                       Confirmar Contraseña
-                      {/* 🔥 Indicadores visuales en tiempo real */}
                       {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Coinciden</span>}
                       {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3"/> No coinciden</span>}
                     </Label>

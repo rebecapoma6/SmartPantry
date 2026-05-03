@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore"; // Ajusta la ruta a tu store
+import { useAuthStore } from "../../stores/useAuthStore"; 
 import { Bell, LogOut, Menu, ShieldAlert, UserCircle, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,10 +17,14 @@ import { createUserRepository } from "../../database/repositories";
 import { useState } from "react";
 
 export default function Navbar() {
-  const { isAuthenticated, clearSession, sessionUser } = useAuthStore();
+  // 🔥 1. MEJOR PRÁCTICA: Extraer variables de Zustand una por una para garantizar el re-render
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const clearSession = useAuthStore((state) => state.clearSession);
+  const sessionUser = useAuthStore((state) => state.sessionUser);
+  
   const userRepository = createUserRepository();
   const navigate = useNavigate();
-  const alertasPendientes = 2; //luego lo uso
+  const alertasPendientes = 2; 
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   const avatar = sessionUser?.profile?.avatar_url;
@@ -35,7 +39,6 @@ export default function Navbar() {
     }
   };
 
-  // Función para cerrar el menú al hacer clic en un link del celular
   const cerrarMenu = () => setMenuAbierto(false);
 
   return (
@@ -51,7 +54,7 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* MENÚ DE ESCRITORIO (Se oculta en celulares con "hidden md:flex") */}
+          {/* MENÚ DE ESCRITORIO */}
           {isAuthenticated && (
             <div className="hidden md:flex gap-4 text-sm font-medium text-gray-600 items-center">
               {rol === 'AdminGeneral' ? (
@@ -92,6 +95,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 {avatar ? (
                   <img
+                    key={avatar} // 🔥 2. TRUCO NINJA: El key fuerza a React a recargar la imagen si cambia la URL
                     src={avatar}
                     alt={`Avatar de ${nombre}`}
                     className="h-7 w-7 rounded-full object-cover border border-gray-200"
@@ -145,7 +149,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* 🔥 4. BOTÓN HAMBURGUESA (Visible solo en móviles) */}
           <Button
             variant="ghost"
             size="icon"
@@ -157,7 +160,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 🔥 5. MENÚ MÓVIL DESPLEGABLE */}
       {menuAbierto && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg flex flex-col py-4 px-6 gap-4 z-50">
           {isAuthenticated ? (
