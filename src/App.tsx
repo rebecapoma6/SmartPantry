@@ -22,6 +22,7 @@ import AdminGeneralPage from "./pages/SAdminGeneralPage";
 import SAdminFamiliasPage from "./pages/SAdminFamiliasPage";
 import PerfilSuperAdmin from "./pages/PerfilSuperAdmin";
 import AdminUserPage from "./pages/AdminUserPage";
+import EstadisticasPage from "./pages/EstadisticasPage";
 
 
 
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: "/inventario", element: <InventarioPage/> },
-          // { path: "/estadisticas", element: <EstadisticasPage/> },
+          { path: "/estadisticas", element: <EstadisticasPage/> },
           { path: "/perfil", element: <AdminUserPage/>} 
         ]
       }

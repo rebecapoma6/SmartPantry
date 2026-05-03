@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/database/supabase/Client";
 import toast from "react-hot-toast";
-import { Camera, Save, ShieldCheck, User as UserIcon, Home } from "lucide-react";
+import { Camera, Save, ShieldCheck, User as UserIcon, Home, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,11 @@ export default function MiPerfil() {
 
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
+
+  // 🔥 Lógica de validación en tiempo real para la contraseña
+  const contrasenasCoinciden = nuevaPassword === confirmarPassword && nuevaPassword.length > 0;
+  const mostrarErrorPass = confirmarPassword.length > 0 && nuevaPassword !== confirmarPassword;
+  const botonPasswordDeshabilitado = nuevaPassword.length < 6 || !contrasenasCoinciden;
 
   useEffect(() => {
     const cargarPerfil = async () => {
@@ -76,11 +81,11 @@ export default function MiPerfil() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true, cacheControl: '3600' });
 
       if (uploadError) throw uploadError;
 
@@ -96,21 +101,15 @@ export default function MiPerfil() {
       setAvatarUrl(publicUrl);
       toast.success("¡Avatar actualizado!", { id: toastId });
     } catch (error) {
-      toast.error("Error al subir la imagen", { id: toastId });
+      console.error("Error subiendo avatar:", error);
+      toast.error("Error al subir la imagen. Verifica tu Storage.", { id: toastId });
     }
   };
 
   const handleActualizarPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (nuevaPassword.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-    if (nuevaPassword !== confirmarPassword) {
-      toast.error("Las contraseñas no coinciden");
-      return;
-    }
+    if (botonPasswordDeshabilitado) return;
 
     const toastId = toast.loading("Cambiando contraseña...");
     try {
@@ -131,104 +130,131 @@ export default function MiPerfil() {
     return nom.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
   };
 
-  if (loading) return <div className="p-10 text-center text-slate-500">Cargando perfil...</div>;
+  if (loading) return <div className="p-10 text-center text-slate-500 font-medium animate-pulse">Cargando tu perfil...</div>;
 
   return (
-    // He quitado el pt-24 y el min-h-screen aquí para que encaje perfecto dentro de tu pestaña (Tab)
-    <div className="max-w-5xl mx-auto py-2">
-      
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Detalles de la Cuenta</h2>
-        <p className="text-slate-500 mt-1">Administra tu información personal y seguridad</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <div className="max-w-6xl mx-auto py-4 px-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* COLUMNA IZQUIERDA: IDENTIDAD */}
-        <Card className="border-none shadow-sm overflow-hidden lg:col-span-1">
-          <div className="h-28 bg-gradient-to-r from-success to-primary"></div>
-          <CardContent className="px-6 pb-6 relative -mt-14 flex flex-col items-center text-center">
+        <Card className="border border-slate-100 shadow-md overflow-hidden lg:col-span-4 rounded-xl bg-white">
+          <div className="h-24 bg-gradient-to-tr from-green-600 via-emerald-500 to-teal-400"></div>
+          <CardContent className="px-5 pb-6 relative -mt-12 flex flex-col items-center text-center">
             <div className="relative group">
-              <div className="w-28 h-28 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center overflow-hidden shadow-md">
+              <div className="w-24 h-24 rounded-full border-4 border-white bg-slate-50 flex items-center justify-center overflow-hidden shadow-md ring-2 ring-green-50">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-3xl font-bold text-success">{getIniciales(nombre)}</span>
+                  <span className="text-3xl font-black text-green-600 tracking-tighter">{getIniciales(nombre)}</span>
                 )}
               </div>
               
-              <Label htmlFor="avatar-upload" className="absolute bottom-1 right-1 bg-success p-2.5 rounded-full text-white cursor-pointer hover:bg-success-hover transition shadow-sm group-hover:scale-105">
-                <Camera className="w-4 h-4" />
+              <Label htmlFor="avatar-upload" className="absolute bottom-1 right-1 bg-green-600 p-2 rounded-full text-white cursor-pointer hover:bg-green-700 transition-all shadow-md group-hover:scale-110">
+                <Camera className="w-3.5 h-3.5" />
               </Label>
               <Input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleCambiarAvatar} />
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-900 mt-4">{nombre || "Usuario"}</h2>
+            <h2 className="text-xl font-bold text-slate-800 mt-4">{nombre || "Usuario"}</h2>
+            <p className="text-slate-500 text-sm mt-0.5">{email}</p>
             
-            {/* Etiqueta actualizada para el AdminUser */}
-            <div className="flex items-center gap-1.5 mt-2 bg-success/10 text-success px-3 py-1 rounded-full text-xs font-semibold border border-success/20">
-              <Home className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 shadow-sm">
+              <Home className="w-3.5 h-3.5" />
               <span>Gestor de Familia</span>
             </div>
           </CardContent>
         </Card>
 
         {/* COLUMNA DERECHA: FORMULARIOS */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-8 space-y-4">
           
-          <Card className="shadow-sm border-slate-200">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <UserIcon className="w-5 h-5 text-success" /> Datos Personales
+          {/* Tarjeta de Datos Personales (Igual que antes) */}
+          <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
+              <CardTitle className="text-base flex items-center gap-2 text-slate-800">
+                <div className="p-1.5 bg-green-100 rounded-md">
+                  <UserIcon className="w-4 h-4 text-green-600" />
+                </div>
+                Datos Personales
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5">
               <form onSubmit={handleActualizarDatos} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Correo Electrónico</Label>
-                    <Input type="email" value={email} disabled className="bg-slate-50 text-slate-500 cursor-not-allowed h-9" />
+                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Correo Electrónico</Label>
+                    <Input type="email" value={email} disabled className="bg-slate-50 text-slate-400 cursor-not-allowed h-9 border-slate-200 font-medium text-sm" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Nombre Completo</Label>
-                    <Input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej. Micaela Pérez" className="h-9 focus-visible:ring-success" />
+                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nombre Completo</Label>
+                    <Input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej. Micaela Pérez" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
                   </div>
-                  <div className="space-y-1.5 md:col-span-2">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Teléfono Móvil</Label>
-                    <Input value={movil} onChange={(e) => setMovil(e.target.value)} placeholder="Ej. +34 600 000 000" className="h-9 focus-visible:ring-success" />
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Teléfono Móvil</Label>
+                    <Input value={movil} onChange={(e) => setMovil(e.target.value)} placeholder="Ej. +34 600 000 000" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
                   </div>
                 </div>
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" className="bg-success hover:bg-success-hover text-white h-9">
-                    <Save className="w-4 h-4 mr-2" /> Actualizar Datos
+                <div className="flex justify-end pt-2 border-t border-slate-100 mt-4">
+                  <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white h-9 px-5 text-sm font-semibold shadow-sm transition-all hover:shadow-md">
+                    <Save className="w-3.5 h-3.5 mr-2" /> Guardar Cambios
                   </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm border-slate-200">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-slate-400" /> Seguridad de Cuenta
-              </CardTitle>
-              <CardDescription className="text-xs">Modifica tu contraseña de acceso a SmartPantry.</CardDescription>
+          {/* Tarjeta de Seguridad (CON VALIDACIÓN VISUAL) */}
+          <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
+                <CardTitle className="text-base flex items-center gap-2 text-slate-800">
+                  <div className="p-1.5 bg-slate-100 rounded-md">
+                    <ShieldCheck className="w-4 h-4 text-slate-600" />
+                  </div>
+                  Seguridad
+                </CardTitle>
+                <CardDescription className="text-xs text-slate-500">Actualiza tu contraseña para proteger tu despensa.</CardDescription>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5">
               <form onSubmit={handleActualizarPassword} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Nueva Contraseña</Label>
-                    <Input type="password" value={nuevaPassword} onChange={(e) => setNuevaPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required className="h-9 focus-visible:ring-success" />
+                  <div className="space-y-1.5 relative">
+                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nueva Contraseña</Label>
+                    <Input 
+                      type="password" 
+                      value={nuevaPassword} 
+                      onChange={(e) => setNuevaPassword(e.target.value)} 
+                      placeholder="Mínimo 6 caracteres" 
+                      required 
+                      className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 text-sm" 
+                    />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Confirmar Contraseña</Label>
-                    <Input type="password" value={confirmarPassword} onChange={(e) => setConfirmarPassword(e.target.value)} placeholder="Repite la contraseña" required className="h-9 focus-visible:ring-success" />
+                  <div className="space-y-1.5 relative">
+                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider flex justify-between">
+                      Confirmar Contraseña
+                      {/* 🔥 Indicadores visuales en tiempo real */}
+                      {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Coinciden</span>}
+                      {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3"/> No coinciden</span>}
+                    </Label>
+                    <Input 
+                      type="password" 
+                      value={confirmarPassword} 
+                      onChange={(e) => setConfirmarPassword(e.target.value)} 
+                      placeholder="Repite la contraseña" 
+                      required 
+                      className={`h-9 text-sm focus-visible:ring-green-600 ${mostrarErrorPass ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300'}`} 
+                    />
                   </div>
                 </div>
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 h-9">
-                    Cambiar Contraseña
+                <div className="flex justify-end pt-2 border-t border-slate-100 mt-4">
+                  <Button 
+                    type="submit" 
+                    variant="outline" 
+                    disabled={botonPasswordDeshabilitado}
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 h-9 px-5 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Actualizar Contraseña
                   </Button>
                 </div>
               </form>

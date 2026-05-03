@@ -20,13 +20,15 @@ export default function AdminUserPage() {
                 <TabsContent value="perfil">
                     <MiPerfil />
                 </TabsContent>
-                
+
                 <TabsContent value="miembros">
                     <GestionMiembros />
                 </TabsContent>
-                
+
                 <TabsContent value="categorias">
-                    <GestionCategorias />
+                    <div className="max-w-2xl mx-auto mt-6">
+                        <GestionCategorias />
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

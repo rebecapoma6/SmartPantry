@@ -175,15 +175,16 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    {/* ... (Todos tus inputs se quedan exactamente igual que antes) ... */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="nombre">Nombre del producto</Label>
-                            <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} required disabled={guardando} />
+                            {/* 🔥 Cambio 1: Etiqueta más clara */}
+                            <Label htmlFor="nombre">Nombre y Formato</Label>
+                            {/* 🔥 Cambio 2: Placeholder de ejemplo */}
+                            <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} placeholder="Ej. Papel Higiénico (Pack 12)" required disabled={guardando} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="marca">Marca (Opcional)</Label>
-                            <Input id="marca" value={datosFormulario.marca} onChange={handleChange} placeholder="Ej. Gloria, Don Vittorio" disabled={guardando} />
+                            <Input id="marca" value={datosFormulario.marca} onChange={handleChange} placeholder="Ej. Lidel" disabled={guardando} />
                         </div>
                     </div>
 
@@ -197,7 +198,8 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                             <Input id="stock_minimo" type="number" min="0" value={datosFormulario.stock_minimo} onChange={handleChange} required disabled={guardando} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="precio">Precio unitario</Label>
+                            {/* 🔥 Cambio 3: Etiqueta de Precio Total */}
+                            <Label htmlFor="precio">Precio Total (€)</Label>
                             <Input id="precio" type="number" step="0.01" min="0" value={datosFormulario.precio} onChange={handleChange} disabled={guardando} />
                         </div>
                     </div>
@@ -224,7 +226,6 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                         </div>
                     </div>
 
-                    {/* 🔥 Botón protegido contra doble clic */}
                     <Button type="submit" disabled={guardando} className="bg-green-600 text-white w-full mt-2 hover:bg-green-700 disabled:bg-gray-400">
                         {guardando ? "Guardando..." : (producto ? "Guardar Cambios" : "Guardar en Despensa")}
                     </Button>

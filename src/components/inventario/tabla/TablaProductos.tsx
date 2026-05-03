@@ -18,7 +18,6 @@ interface ProductoConCategoria {
   categorias: { nombre: string; } | null;
 }
 
-
 interface TablaProductosProps {
   onEditarProducto: (producto: ProductoConCategoria) => void;
   onEliminarProducto: (producto: ProductoConCategoria) => void;
@@ -53,9 +52,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
     cargarProductos();
   }, [sessionUser?.profile?.familia_id]);
 
-
-
-  // 🔥 MAGIA 1: Función de Consumo Rápido (-1)
   const handleDescontar = async (id: string, cantidadActual: number, nombre: string) => {
     if (cantidadActual <= 0) {
       toast.error(`¡Ya no queda ${nombre} en la despensa!`);
@@ -64,7 +60,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
 
     const nuevaCantidad = cantidadActual - 1;
 
-    // Actualizamos en Supabase
     const { error } = await supabase
       .from('productos')
       .update({ cantidad: nuevaCantidad })
@@ -73,7 +68,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
     if (error) {
       toast.error("Error al descontar el producto.");
     } else {
-      // Actualizamos el estado local al toque sin recargar toda la tabla
       setProductos((prev) =>
         prev.map((prod) =>
           prod.id === id ? { ...prod, cantidad: nuevaCantidad } : prod
@@ -84,9 +78,9 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
   };
 
   const getSemaforoColor = (cantidad: number, stockMinimo: number) => {
-    if (cantidad === 0) return "bg-red-100 hover:bg-red-200 transition-colors"; // Agotado (Rojo)
-    if (cantidad <= stockMinimo) return "bg-amber-50 hover:bg-amber-100 transition-colors"; // Crítico (Naranja)
-    return "hover:bg-muted transition-colors"; // Todo ok (Blanco/Gris)
+    if (cantidad === 0) return "bg-red-100 hover:bg-red-200 transition-colors";
+    if (cantidad <= stockMinimo) return "bg-amber-50 hover:bg-amber-100 transition-colors";
+    return "hover:bg-muted transition-colors";
   };
 
   if (cargando) return <div className="text-center p-10">Cargando tu despensa...</div>;
@@ -94,18 +88,18 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
   const esAdminUser = sessionUser?.role === 'AdminUser';
 
   return (
-    <div className="text-left bg-white rounded-md border shadow-sm overflow-hidden">
-      <Table>
-        <TableHeader className="bg-muted">
+    <div className="w-full max-h-[60vh] overflow-auto bg-white rounded-md border shadow-sm relative">
+      <Table className="min-w-[600px] md:min-w-full">
+
+        <TableHeader className="bg-muted sticky top-0 z-10 shadow-sm">
           <TableRow>
             <TableHead className="font-semibold text-foreground">Producto</TableHead>
             <TableHead className="font-semibold text-foreground">Categoría</TableHead>
-            <TableHead className="font-semibold text-foreground">Marca</TableHead>
+            <TableHead className="font-semibold text-foreground hidden md:table-cell">Marca</TableHead>
             <TableHead className="font-semibold text-foreground">Precio</TableHead>
             <TableHead className="font-semibold text-foreground text-center">Cant.</TableHead>
-            <TableHead className="font-semibold text-foreground text-center">Stock Mín.</TableHead>
+            <TableHead className="font-semibold text-foreground text-center hidden md:table-cell">Stock Mín.</TableHead>
             <TableHead className="font-semibold text-foreground">Vencimiento</TableHead>
-            {/* La columna Acciones ahora la ven todos */}
             <TableHead className="text-right font-semibold text-foreground">Acciones</TableHead>
           </TableRow>
         </TableHeader>
@@ -121,7 +115,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
             productos.map((prod) => (
               <TableRow
                 key={prod.id}
-                // Aplicamos el semáforo al fondo de la fila
                 className={getSemaforoColor(prod.cantidad, prod.stock_minimo)}
               >
                 <TableCell className="text-foreground font-medium">
@@ -134,16 +127,17 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                   </span>
                 </TableCell>
 
-                <TableCell className="text-foreground">{prod.marca || "-"}</TableCell>
+                {/* Ocultamos Marca en móviles */}
+                <TableCell className="text-foreground hidden md:table-cell">{prod.marca || "-"}</TableCell>
 
                 <TableCell className="text-foreground">{prod.precio} €</TableCell>
 
-                {/* Resaltamos la cantidad si está en cero */}
                 <TableCell className={`text-center font-bold ${prod.cantidad === 0 ? 'text-red-600' : 'text-foreground'}`}>
                   {prod.cantidad}
                 </TableCell>
 
-                <TableCell className="text-center text-muted-foreground">
+                {/* Ocultamos Stock Mín. en móviles */}
+                <TableCell className="text-center text-muted-foreground hidden md:table-cell">
                   {prod.stock_minimo}
                 </TableCell>
 
@@ -154,7 +148,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                 </TableCell>
 
                 <TableCell className="text-right space-x-1 min-w-[120px]">
-                  {/* BOTÓN DE CONSUMO (-1) DISPONIBLE PARA TODOS */}
                   <Button
                     variant="outline"
                     size="icon"
@@ -166,7 +159,6 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                     <MinusCircle className="w-4 h-4" />
                   </Button>
 
-                  {/* BOTONES DE EDICIÓN SOLO PARA EL GESTOR */}
                   {esAdminUser && (
                     <>
                       <Button variant="ghost" size="icon" className="text-blue-600 h-8 w-8" title="Editar producto" onClick={() => onEditarProducto(prod)}>
