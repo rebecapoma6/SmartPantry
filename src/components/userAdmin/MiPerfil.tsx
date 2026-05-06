@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/database/supabase/Client";
 import toast from "react-hot-toast";
-import { Camera, Save, ShieldCheck, User as UserIcon, Home, CheckCircle2, XCircle } from "lucide-react";
+import { Camera, Save, ShieldCheck, User as UserIcon, Home, CheckCircle2, XCircle, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-// 🔥 1. IMPORTAMOS EL STORE GLOBAL
 import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function MiPerfil() {
@@ -21,9 +19,11 @@ export default function MiPerfil() {
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
 
-  // 🔥 2. TRAEMOS LAS FUNCIONES MAGICAS DE ZUSTAND
   const updateUserName = useAuthStore((state: any) => state.updateUserName);
   const updateUserAvatar = useAuthStore((state: any) => state.updateUserAvatar);
+
+  const sessionUser = useAuthStore((state: any) => state.sessionUser);
+  const esGestor = sessionUser?.role === 'AdminUser';
 
   const contrasenasCoinciden = nuevaPassword === confirmarPassword && nuevaPassword.length > 0;
   const mostrarErrorPass = confirmarPassword.length > 0 && nuevaPassword !== confirmarPassword;
@@ -34,7 +34,7 @@ export default function MiPerfil() {
       try {
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) throw new Error("No hay usuario activo");
-        
+
         setUserId(user.id);
         setEmail(user.email || "");
 
@@ -64,7 +64,7 @@ export default function MiPerfil() {
   const handleActualizarDatos = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
-    
+
     const toastId = toast.loading("Actualizando datos...");
     try {
       const { error } = await supabase
@@ -73,10 +73,9 @@ export default function MiPerfil() {
         .eq('id', userId);
 
       if (error) throw error;
-      
+
       toast.success("¡Datos actualizados con éxito!", { id: toastId });
-      
-      // 🔥 3. AQUÍ LE PASAMOS LA VOZ AL NAVBAR PARA EL NOMBRE
+
       updateUserName(nombre);
       console.log("Navbar avisado del cambio de nombre a:", nombre);
 
@@ -93,7 +92,7 @@ export default function MiPerfil() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
-      
+
       // Con la ruta de la carpeta para respetar tus políticas de Supabase
       const filePath = `${userId}/${fileName}`;
 
@@ -114,8 +113,7 @@ export default function MiPerfil() {
 
       setAvatarUrl(publicUrl);
       toast.success("¡Avatar actualizado!", { id: toastId });
-      
-      // 🔥 4. AQUÍ LE PASAMOS LA VOZ AL NAVBAR PARA LA FOTO
+
       updateUserAvatar(publicUrl);
       console.log("Navbar avisado del cambio de avatar:", publicUrl);
 
@@ -127,15 +125,15 @@ export default function MiPerfil() {
 
   const handleActualizarPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (botonPasswordDeshabilitado) return;
 
     const toastId = toast.loading("Cambiando contraseña...");
     try {
       const { error } = await supabase.auth.updateUser({ password: nuevaPassword });
-      
+
       if (error) throw error;
-      
+
       toast.success("¡Contraseña actualizada correctamente!", { id: toastId });
       setNuevaPassword("");
       setConfirmarPassword("");
@@ -154,7 +152,7 @@ export default function MiPerfil() {
   return (
     <div className="max-w-6xl mx-auto py-4 px-2">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         {/* COLUMNA IZQUIERDA: IDENTIDAD */}
         <Card className="border border-slate-100 shadow-md overflow-hidden lg:col-span-4 rounded-xl bg-white">
           <div className="h-24 bg-gradient-to-tr from-green-600 via-emerald-500 to-teal-400"></div>
@@ -167,7 +165,7 @@ export default function MiPerfil() {
                   <span className="text-3xl font-black text-green-600 tracking-tighter">{getIniciales(nombre)}</span>
                 )}
               </div>
-              
+
               <Label htmlFor="avatar-upload" className="absolute bottom-1 right-1 bg-green-600 p-2 rounded-full text-white cursor-pointer hover:bg-green-700 transition-all shadow-md group-hover:scale-110">
                 <Camera className="w-3.5 h-3.5" />
               </Label>
@@ -176,17 +174,23 @@ export default function MiPerfil() {
 
             <h2 className="text-xl font-bold text-slate-800 mt-4">{nombre || "Usuario"}</h2>
             <p className="text-slate-500 text-sm mt-0.5">{email}</p>
-            
-            <div className="flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 shadow-sm">
-              <Home className="w-3.5 h-3.5" />
-              <span>Gestor de Familia</span>
-            </div>
+            {esGestor ? (
+              <div className="flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 shadow-sm">
+                <Home className="w-3.5 h-3.5" />
+                <span>Gestor de Familia</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 mt-3 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 shadow-sm">
+                <Users className="w-3.5 h-3.5" />
+                <span>Miembro Invitado</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* COLUMNA DERECHA: FORMULARIOS */}
         <div className="lg:col-span-8 space-y-4">
-          
+
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
               <CardTitle className="text-base flex items-center gap-2 text-slate-800">
@@ -238,35 +242,35 @@ export default function MiPerfil() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5 relative">
                     <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nueva Contraseña</Label>
-                    <Input 
-                      type="password" 
-                      value={nuevaPassword} 
-                      onChange={(e) => setNuevaPassword(e.target.value)} 
-                      placeholder="Mínimo 6 caracteres" 
-                      required 
-                      className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 text-sm" 
+                    <Input
+                      type="password"
+                      value={nuevaPassword}
+                      onChange={(e) => setNuevaPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      required
+                      className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5 relative">
                     <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider flex justify-between">
                       Confirmar Contraseña
-                      {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Coinciden</span>}
-                      {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3"/> No coinciden</span>}
+                      {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Coinciden</span>}
+                      {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3" /> No coinciden</span>}
                     </Label>
-                    <Input 
-                      type="password" 
-                      value={confirmarPassword} 
-                      onChange={(e) => setConfirmarPassword(e.target.value)} 
-                      placeholder="Repite la contraseña" 
-                      required 
-                      className={`h-9 text-sm focus-visible:ring-green-600 ${mostrarErrorPass ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300'}`} 
+                    <Input
+                      type="password"
+                      value={confirmarPassword}
+                      onChange={(e) => setConfirmarPassword(e.target.value)}
+                      placeholder="Repite la contraseña"
+                      required
+                      className={`h-9 text-sm focus-visible:ring-green-600 ${mostrarErrorPass ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300'}`}
                     />
                   </div>
                 </div>
                 <div className="flex justify-end pt-2 border-t border-slate-100 mt-4">
-                  <Button 
-                    type="submit" 
-                    variant="outline" 
+                  <Button
+                    type="submit"
+                    variant="outline"
                     disabled={botonPasswordDeshabilitado}
                     className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 h-9 px-5 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -276,7 +280,6 @@ export default function MiPerfil() {
               </form>
             </CardContent>
           </Card>
-
         </div>
       </div>
     </div>

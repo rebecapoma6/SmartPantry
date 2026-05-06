@@ -22,10 +22,9 @@ export default function Navbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const clearSession = useAuthStore((state) => state.clearSession);
   const sessionUser = useAuthStore((state) => state.sessionUser);
-  
-  // 🔥 AQUÍ ESTÁ LA MAGIA: Traemos el ticket de alertas desde el store global
+
   const ticketAlertas = useAuthStore((state) => state.ticketAlertas);
-  
+
   const userRepository = createUserRepository();
   const navigate = useNavigate();
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -40,15 +39,14 @@ export default function Navbar() {
     if (isAuthenticated && sessionUser && rol !== 'AdminGeneral') {
       cargarAlertas();
     }
-  // 🔥 Y AQUÍ LE DECIMOS: "React, ejecuta cargarAlertas de nuevo si el ticketAlertas cambia"
-  }, [isAuthenticated, sessionUser, ticketAlertas]); 
+  }, [isAuthenticated, sessionUser, ticketAlertas]);
 
   const cargarAlertas = async () => {
     try {
       const miFamiliaId = sessionUser?.profile?.familia_id;
-      
+
       let query = supabase.from('productos').select('id, nombre, cantidad, stock_minimo, fecha_caducidad');
-      
+
       if (miFamiliaId) {
         query = query.eq('familia_id', miFamiliaId);
       } else if (sessionUser?.profile?.id) {
@@ -61,7 +59,7 @@ export default function Navbar() {
       if (data) {
         const nuevasAlertas: any[] = [];
         const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0); 
+        hoy.setHours(0, 0, 0, 0);
 
         data.forEach(prod => {
           if (prod.cantidad < prod.stock_minimo) {
@@ -76,8 +74,9 @@ export default function Navbar() {
 
           if (prod.fecha_caducidad) {
             const fechaCad = new Date(prod.fecha_caducidad);
+            fechaCad.setHours(0, 0, 0, 0);
             const diffTime = fechaCad.getTime() - hoy.getTime();
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays < 0) {
               nuevasAlertas.push({
@@ -87,7 +86,16 @@ export default function Navbar() {
                 icono: <AlertTriangle className="w-4 h-4 text-red-600 mr-2 shrink-0" />,
                 colorText: 'text-red-600 font-bold'
               });
-            } else if (diffDays <= 5) { 
+            } else if (diffDays === 0) {
+              nuevasAlertas.push({
+                id: `cad-${prod.id}`,
+                tipo: 'por_caducar',
+                mensaje: `${prod.nombre} - Vence HOY`,
+                icono: <Clock className="w-4 h-4 text-rose-500 mr-2 shrink-0" />,
+                colorText: 'text-rose-600 font-bold'
+              });
+            }
+            else if (diffDays <= 5) {
               nuevasAlertas.push({
                 id: `cad-${prod.id}`,
                 tipo: 'por_caducar',
@@ -150,11 +158,9 @@ export default function Navbar() {
                 <>
                   <Link to="/inventario" className="hover:text-green-600">Mi Despensa</Link>
                   <Link to="/estadisticas" className="hover:text-green-600">Estadísticas</Link>
-                  {rol === 'AdminUser' && (
-                    <Link to="/perfil" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2">
-                      <Users className="w-4 h-4" /> Mi Familia
-                    </Link>
-                  )}
+                  <Link to="/perfil" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2">
+                    <Users className="w-4 h-4" /> Mi Familia
+                  </Link>
                 </>
               )}
             </div>
@@ -198,20 +204,20 @@ export default function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-64 max-h-[70vh] overflow-y-auto">
                     <DropdownMenuGroup>
-                    <DropdownMenuLabel>Notificaciones de Despensa</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {alertasPendientes > 0 ? (
-                      alertas.map((alerta) => (
-                        <DropdownMenuItem key={alerta.id} className={`flex items-center py-2 ${alerta.colorText}`}>
-                          {alerta.icono}
-                          <span className="truncate">{alerta.mensaje}</span>
+                      <DropdownMenuLabel>Notificaciones de Despensa</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {alertasPendientes > 0 ? (
+                        alertas.map((alerta) => (
+                          <DropdownMenuItem key={alerta.id} className={`flex items-center py-2 ${alerta.colorText}`}>
+                            {alerta.icono}
+                            <span className="truncate">{alerta.mensaje}</span>
+                          </DropdownMenuItem>
+                        ))
+                      ) : (
+                        <DropdownMenuItem className="text-gray-500 py-4 text-center justify-center">
+                          Tu despensa está al día.
                         </DropdownMenuItem>
-                      ))
-                    ) : (
-                      <DropdownMenuItem className="text-gray-500 py-4 text-center justify-center">
-                        Tu despensa está al día.
-                      </DropdownMenuItem>
-                    )}
+                      )}
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -264,11 +270,9 @@ export default function Navbar() {
                 <>
                   <Link to="/inventario" onClick={cerrarMenu} className="py-2 text-gray-700 font-medium hover:text-green-600">Mi Despensa</Link>
                   <Link to="/estadisticas" onClick={cerrarMenu} className="py-2 text-gray-700 font-medium hover:text-green-600">Estadísticas</Link>
-                  {rol === 'AdminUser' && (
-                    <Link to="/perfil" onClick={cerrarMenu} className="flex items-center gap-2 text-green-700 font-medium py-2">
-                      <Users className="w-5 h-5" /> Mi Familia
-                    </Link>
-                  )}
+                  <Link to="/perfil" onClick={cerrarMenu} className="flex items-center gap-2 text-green-700 font-medium py-2">
+                    <Users className="w-5 h-5" /> Mi Familia
+                  </Link>
                 </>
               )}
 
