@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/database/supabase/Client";
 import { useAuthStore } from "@/stores/useAuthStore";
-// 🔥 1. IMPORTANTE: Agregamos "Legend" a la importación de recharts
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { Activity, PieChart as PieIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

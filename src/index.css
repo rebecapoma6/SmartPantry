@@ -86,11 +86,8 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --success: oklch(0.637 0.215 142.5);
-  /* green-600 */
   --success-hover: oklch(0.555 0.213 142.5);
-  /* green-700 */
   --success-foreground: oklch(1 0 0);
-  /* white */
 }
 
 .dark {
