@@ -11,9 +11,12 @@ interface AuthState {
   setSession: (sessionUser: SessionUser) => void
   clearSession: () => void
   
-  // 🔥 1. Agregamos las firmas de las nuevas funciones a la interfaz
   updateUserAvatar: (newUrl: string) => void
   updateUserName: (newName: string) => void
+
+  // 🔥 1. Bien puestos en la interfaz
+  ticketAlertas: number;          
+  refrescarAlertas: () => void;
 }
 
 const userRepository = createUserRepository();
@@ -23,6 +26,8 @@ export const useAuthStore = create<AuthState>()(
     sessionUser: null,
     isAuthenticated: false,
     isAdmin: false,
+
+    ticketAlertas: 0,
 
     setSession: async (sessionUser) => {
       let isAdmin = false;
@@ -41,7 +46,6 @@ export const useAuthStore = create<AuthState>()(
 
     clearSession: () => set({ sessionUser: null, isAuthenticated: false ,isAdmin: false }),
 
-    // 🔥 2. Damos vida a las funciones: clonan el usuario actual y solo pisan el dato específico
     updateUserAvatar: (newUrl) => set((state) => ({
       sessionUser: state.sessionUser 
         ? { 
@@ -58,6 +62,10 @@ export const useAuthStore = create<AuthState>()(
             profile: { ...(state.sessionUser.profile as any), nombre: newName } 
           } 
         : null
+    })),
+
+    refrescarAlertas: () => set((state) => ({ 
+      ticketAlertas: state.ticketAlertas + 1 
     })),
 
   }),

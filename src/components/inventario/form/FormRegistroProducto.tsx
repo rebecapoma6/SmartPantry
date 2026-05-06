@@ -32,7 +32,7 @@ interface FormRegistroProductoProps {
 export default function FormRegistroProducto({ abierto, onClose, producto, onRegistroExitoso }: FormRegistroProductoProps) {
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [guardando, setGuardando] = useState(false); // 🔥 Nuevo estado para evitar doble clic
-    
+
     const estadoInicial = {
         nombre: "",
         marca: "",
@@ -59,11 +59,13 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
         if (abierto) {
             obtenerCategorias();
         }
-      
+
     }, [abierto]);
 
     useEffect(() => {
         if (producto) {
+          const idEncontrado = producto.categoria_id || producto.categorias?.id || "";
+
             setDatosFormulario({
                 nombre: producto.nombre || "",
                 marca: producto.marca || "",
@@ -71,7 +73,7 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 cantidad: producto.cantidad || 1,
                 stock_minimo: producto.stock_minimo || 1,
                 fecha_caducidad: producto.fecha_caducidad || "",
-                categoria_id: producto.categorias?.id || "" 
+                categoria_id: idEncontrado 
             });
         } else {
             setDatosFormulario(estadoInicial);
@@ -85,10 +87,10 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        
+
         // Si ya estamos guardando, ignoramos clics extra (Mata el Bug de productos dobles)
-        if (guardando) return; 
-        
+        if (guardando) return;
+
         setGuardando(true);
 
         const idUsuarioLogueado = sessionUser?.profile?.id;
@@ -120,7 +122,7 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                     .from('productos')
                     .update(datosAActualizar)
                     .eq('id', producto.id)
-                    .select(); 
+                    .select();
 
                 if (error) throw error;
                 if (!data || data.length === 0) {
@@ -151,8 +153,8 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 toast.success("¡Producto guardado correctamente!", { id: toastId });
             }
 
-            onRegistroExitoso(); 
-            onClose(); 
+            onRegistroExitoso();
+            onClose();
 
         } catch (error: any) {
             console.error("Error completo:", error);
@@ -168,8 +170,8 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 <DialogHeader>
                     <DialogTitle>{producto ? "Editar Producto" : "Nuevo Producto"}</DialogTitle>
                     <DialogDescription>
-                        {producto 
-                            ? "Modifica los datos del producto en tu despensa." 
+                        {producto
+                            ? "Modifica los datos del producto en tu despensa."
                             : "Ingresa los datos del producto para guardarlo en tu despensa."}
                     </DialogDescription>
                 </DialogHeader>

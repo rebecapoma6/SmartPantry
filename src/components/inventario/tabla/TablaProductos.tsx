@@ -15,6 +15,7 @@ interface ProductoConCategoria {
   cantidad: number;
   stock_minimo: number;
   fecha_caducidad: string;
+  categoria_id: string | null;
   categorias: { nombre: string; } | null;
 }
 
@@ -27,6 +28,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
   const [productos, setProductos] = useState<ProductoConCategoria[]>([]);
   const [cargando, setCargando] = useState(true);
   const sessionUser = useAuthStore((state) => state.sessionUser);
+  const refrescarAlertas = useAuthStore((state) => state.refrescarAlertas);
 
   useEffect(() => {
     if (!sessionUser?.profile?.familia_id) return;
@@ -36,8 +38,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
       const { data, error } = await supabase
         .from('productos')
         .select(`
-          id, nombre, marca, precio, cantidad, stock_minimo, fecha_caducidad, categorias (nombre)
-        `)
+          id, nombre, marca, precio, cantidad, stock_minimo, fecha_caducidad,categoria_id, categorias (nombre)`)
         .eq('familia_id', sessionUser.profile?.familia_id)
         .order('fecha_caducidad', { ascending: true });
 
@@ -74,6 +75,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
         )
       );
       toast.success(`Se descontó 1 de ${nombre}`);
+      refrescarAlertas();
     }
   };
 

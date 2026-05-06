@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore"; 
-import { Bell, LogOut, Menu, ShieldAlert, UserCircle, Users, X } from "lucide-react";
+import { Bell, LogOut, Menu, ShieldAlert, UserCircle, Users, X, AlertTriangle, Clock, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logo from "../../image/sinfondosmartpantry.png";
@@ -11,25 +10,103 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 
-import { createUserRepository } from "../../database/repositories";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/database/supabase/Client";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { createUserRepository } from "@/database/repositories";
 
 export default function Navbar() {
-  // 🔥 1. MEJOR PRÁCTICA: Extraer variables de Zustand una por una para garantizar el re-render
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const clearSession = useAuthStore((state) => state.clearSession);
   const sessionUser = useAuthStore((state) => state.sessionUser);
   
+  // 🔥 AQUÍ ESTÁ LA MAGIA: Traemos el ticket de alertas desde el store global
+  const ticketAlertas = useAuthStore((state) => state.ticketAlertas);
+  
   const userRepository = createUserRepository();
   const navigate = useNavigate();
-  const alertasPendientes = 2; 
   const [menuAbierto, setMenuAbierto] = useState(false);
+
+  const [alertas, setAlertas] = useState<any[]>([]);
 
   const avatar = sessionUser?.profile?.avatar_url;
   const nombre = sessionUser?.profile?.nombre?.split(' ')[0] || 'Usuario';
   const rol = sessionUser?.role;
+
+  useEffect(() => {
+    if (isAuthenticated && sessionUser && rol !== 'AdminGeneral') {
+      cargarAlertas();
+    }
+  // 🔥 Y AQUÍ LE DECIMOS: "React, ejecuta cargarAlertas de nuevo si el ticketAlertas cambia"
+  }, [isAuthenticated, sessionUser, ticketAlertas]); 
+
+  const cargarAlertas = async () => {
+    try {
+      const miFamiliaId = sessionUser?.profile?.familia_id;
+      
+      let query = supabase.from('productos').select('id, nombre, cantidad, stock_minimo, fecha_caducidad');
+      
+      if (miFamiliaId) {
+        query = query.eq('familia_id', miFamiliaId);
+      } else if (sessionUser?.profile?.id) {
+        query = query.eq('agregado_por', sessionUser.profile.id);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      if (data) {
+        const nuevasAlertas: any[] = [];
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); 
+
+        data.forEach(prod => {
+          if (prod.cantidad < prod.stock_minimo) {
+            nuevasAlertas.push({
+              id: `stock-${prod.id}`,
+              tipo: 'stock',
+              mensaje: `${prod.nombre} - Falta stock`,
+              icono: <ShoppingCart className="w-4 h-4 text-amber-500 mr-2 shrink-0" />,
+              colorText: 'text-amber-700'
+            });
+          }
+
+          if (prod.fecha_caducidad) {
+            const fechaCad = new Date(prod.fecha_caducidad);
+            const diffTime = fechaCad.getTime() - hoy.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+              nuevasAlertas.push({
+                id: `cad-${prod.id}`,
+                tipo: 'caducado',
+                mensaje: `${prod.nombre} - ¡Caducado!`,
+                icono: <AlertTriangle className="w-4 h-4 text-red-600 mr-2 shrink-0" />,
+                colorText: 'text-red-600 font-bold'
+              });
+            } else if (diffDays <= 5) { 
+              nuevasAlertas.push({
+                id: `cad-${prod.id}`,
+                tipo: 'por_caducar',
+                mensaje: `${prod.nombre} - Vence en ${diffDays} día(s)`,
+                icono: <Clock className="w-4 h-4 text-orange-500 mr-2 shrink-0" />,
+                colorText: 'text-orange-600'
+              });
+            }
+          }
+        });
+
+        setAlertas(nuevasAlertas);
+      }
+    } catch (error) {
+      console.error("Error al cargar alertas:", error);
+    }
+  };
+
+  const alertasPendientes = alertas.length;
 
   const handleLogout = async () => {
     const { error } = await userRepository.cerrarSesion();
@@ -95,7 +172,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 {avatar ? (
                   <img
-                    key={avatar} // 🔥 2. TRUCO NINJA: El key fuerza a React a recargar la imagen si cambia la URL
+                    key={avatar}
                     src={avatar}
                     alt={`Avatar de ${nombre}`}
                     className="h-7 w-7 rounded-full object-cover border border-gray-200"
@@ -108,28 +185,34 @@ export default function Navbar() {
                 </span>
               </div>
 
+              {/* MENU DESPLEGABLE DE ALERTAS DINÁMICO */}
               {rol !== 'AdminGeneral' && (
                 <DropdownMenu>
                   <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none">
                     <Bell className="h-6 w-6 text-gray-600" />
                     {alertasPendientes > 0 && (
-                      <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs rounded-full">
+                      <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full border-white border-2">
                         {alertasPendientes}
                       </Badge>
                     )}
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>Alertas de Caducidad</DropdownMenuLabel>
+                  <DropdownMenuContent align="end" className="w-64 max-h-[70vh] overflow-y-auto">
+                    <DropdownMenuGroup>
+                    <DropdownMenuLabel>Notificaciones de Despensa</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {alertasPendientes > 0 ? (
-                      <DropdownMenuItem className="text-red-600 cursor-pointer">
-                        Leche Gloria - Vence en 2 días
-                      </DropdownMenuItem>
+                      alertas.map((alerta) => (
+                        <DropdownMenuItem key={alerta.id} className={`flex items-center py-2 ${alerta.colorText}`}>
+                          {alerta.icono}
+                          <span className="truncate">{alerta.mensaje}</span>
+                        </DropdownMenuItem>
+                      ))
                     ) : (
-                      <DropdownMenuItem className="text-gray-500">
+                      <DropdownMenuItem className="text-gray-500 py-4 text-center justify-center">
                         Tu despensa está al día.
                       </DropdownMenuItem>
                     )}
+                    </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
@@ -160,6 +243,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* MENÚ MÓVIL DESPLEGABLE */}
       {menuAbierto && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg flex flex-col py-4 px-6 gap-4 z-50">
           {isAuthenticated ? (
