@@ -97,6 +97,12 @@ export class SupaBaseUserRepository implements UserRepository {
     if (authError) return { error: authError };
     if (!authData.user) return { error: { message: 'No se recibió usuario tras login' } };
 
+    const fechaActual = new Date().toISOString();
+    await supabase
+      .from('profiles')
+      .update({ ultimo_acceso: fechaActual })
+      .eq('id', authData.user.id);
+
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('*')

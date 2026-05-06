@@ -5,17 +5,11 @@ import ModalEliminarProducto from "@/components/inventario/form/ModalEliminarPro
 import ModalCategorias from "@/components/inventario/tabla/ModalCategorias";
 import { Settings } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
-
-// 🔥 1. Importamos los componentes de Shadcn para las Pestañas
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// 🔥 2. Importamos tu nueva lista inteligente
 import ListaCompras from "@/components/userAdmin/ListaCompras";
 
 export default function InventarioPage() {
-    // 1. El estado de la "campanada" para refrescar la tabla
     const [ticketRefresco, setTicketRefresco] = useState(0);
-
-    // 2. ESTADOS: Para controlar los modales y el producto seleccionado
     const [productoSeleccionado, setProductoSeleccionado] = useState<any>(null);
     const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
     const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
@@ -24,7 +18,6 @@ export default function InventarioPage() {
     const sessionUser = useAuthStore((state) => state.sessionUser);
     const refrescarAlertas = useAuthStore((state) => state.refrescarAlertas);
     
-    // 3. Función que avisa que hubo un cambio (crear, editar o eliminar)
     const avisarCambio = () => {
         setTicketRefresco(prev => prev + 1);
         refrescarAlertas();
@@ -39,13 +32,11 @@ export default function InventarioPage() {
     return (
         <div className="p-6 pt-24 max-w-7xl mx-auto space-y-6">
 
-            {/* Título Principal */}
             <div>
                 <h1 className="text-3xl font-bold text-gray-900">Mi Despensa</h1>
                 <p className="text-gray-500 text-sm mt-1">Gestiona tu inventario y revisa qué te falta comprar.</p>
             </div>
 
-            {/* 🔥 3. ENVOLVEMOS TODO EN EL COMPONENTE TABS */}
             <Tabs defaultValue="inventario" className="w-full">
                 
                 {/* Los botones de arriba para cambiar de pestaña */}
@@ -54,12 +45,9 @@ export default function InventarioPage() {
                     <TabsTrigger value="lista" className="font-medium">🛒 Lista Inteligente</TabsTrigger>
                 </TabsList>
 
-                {/* ========================================= */}
-                {/* PESTAÑA 1: INVENTARIO (Tu código original) */}
-                {/* ========================================= */}
+                {/* PESTAÑA: INVENTARIO */}
                 <TabsContent value="inventario" className="mt-0 space-y-4">
                     
-                    {/* Botones de acción específicos del inventario */}
                     <div className="flex justify-end items-center">
                         <div className="flex gap-2">
                             {sessionUser?.role === 'AdminUser' && (
@@ -80,7 +68,7 @@ export default function InventarioPage() {
                         </div>
                     </div>
 
-                    {/* LA TABLA */}
+                    {/* TABLA PRODUCTOS */}
                     <TablaProductos 
                         key={ticketRefresco}
                         onEditarProducto={(prod) => {
@@ -94,16 +82,13 @@ export default function InventarioPage() {
                     />
                 </TabsContent>
 
-                {/* ========================================= */}
-                {/* PESTAÑA 2: LISTA DE COMPRAS INTELIGENTE   */}
-                {/* ========================================= */}
+                {/* PESTAÑA:LISTA DE COMPRAS */}
                 <TabsContent value="lista" className="mt-0">
                     <ListaCompras />
                 </TabsContent>
 
             </Tabs>
 
-            {/* 🔥 LOS MODALES INVISIBLES VAN AQUÍ ABAJO (Buena práctica de Arquitectura) */}
             <FormRegistroProducto 
                 abierto={modalEditarAbierto} 
                 producto={productoSeleccionado}

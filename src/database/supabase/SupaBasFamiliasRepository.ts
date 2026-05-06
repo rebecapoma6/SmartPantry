@@ -6,7 +6,7 @@ export const SupaBasFamiliasRepository = {
     // 1. Jalamos familias
     const { data: dataFamilias, error: errorFamilias } = await supabase
       .from('familias')
-      .select(`id, nombre, created_at, profiles ( id, nombre, movil )`)
+      .select(`id, nombre, created_at, profiles (id, nombre, movil, ultimo_acceso, created_at )`)
       .order('created_at', { ascending: false });
 
     if (errorFamilias) throw errorFamilias;
