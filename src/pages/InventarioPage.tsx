@@ -34,13 +34,13 @@ export default function InventarioPage() {
 
             <div>
                 <h1 className="text-3xl font-bold text-gray-900">Mi Despensa</h1>
-                <p className="text-gray-500 text-sm mt-1">Gestiona tu inventario y revisa qué te falta comprar.</p>
+                <p className="text-muted-foreground text-sm mt-1">Gestiona tu inventario y revisa qué te falta comprar.</p>
             </div>
 
             <Tabs defaultValue="inventario" className="w-full">
                 
                 {/* Los botones de arriba para cambiar de pestaña */}
-                <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-slate-100">
+                <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-muted">
                     <TabsTrigger value="inventario" className="font-medium">📦 Inventario Actual</TabsTrigger>
                     <TabsTrigger value="lista" className="font-medium">🛒 Lista Inteligente</TabsTrigger>
                 </TabsList>
@@ -53,7 +53,7 @@ export default function InventarioPage() {
                             {sessionUser?.role === 'AdminUser' && (
                                 <button 
                                     onClick={() => setModalCategoriasAbierto(true)}
-                                    className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md font-medium flex items-center gap-2 shadow-sm transition-all"
+                                    className="bg-background border border-gray-300 text-gray-700 hover:bg-muted px-4 py-2 rounded-md font-medium flex items-center gap-2 shadow-sm transition-all"
                                 >
                                     <Settings className="w-4 h-4" /> Categorías
                                 </button>

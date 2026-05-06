@@ -23,6 +23,7 @@ import SAdminFamiliasPage from "./pages/SAdminFamiliasPage";
 import PerfilSuperAdmin from "./pages/PerfilSuperAdmin";
 import AdminUserPage from "./pages/AdminUserPage";
 import EstadisticasPage from "./pages/EstadisticasPage";
+import { ThemeProvider } from "./components/ui/theme-provider";
 
 
 
@@ -91,8 +92,10 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <>
+      <ThemeProvider defaultTheme="system" storageKey="smartpantry-theme">
       <Toaster position="top-right" />
       <RouterProvider router={router} />
+    </ThemeProvider>
     </>
   );
 }

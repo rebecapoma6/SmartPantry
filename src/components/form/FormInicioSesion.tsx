@@ -104,10 +104,10 @@ export default function FormInicioSesion() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto mb-8 p-6 bg-white rounded-xl shadow-sm border mt-10">
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto mb-8 p-6 bg-background rounded-xl shadow-sm border mt-10">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-green-700">Iniciar Sesión</h2>
-        <p className="text-sm text-gray-500">Ingresa a tu despensa inteligente</p>
+        <p className="text-sm text-muted-foreground">Ingresa a tu despensa inteligente</p>
       </div>
 
       <div className="space-y-1">

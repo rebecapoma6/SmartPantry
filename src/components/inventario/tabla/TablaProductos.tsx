@@ -90,7 +90,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
   const esAdminUser = sessionUser?.role === 'AdminUser';
 
   return (
-    <div className="w-full max-h-[60vh] overflow-auto bg-white rounded-md border shadow-sm relative">
+    <div className="w-full max-h-[60vh] overflow-auto bg-card rounded-md border shadow-sm relative">
       <Table className="min-w-[600px] md:min-w-full">
 
         <TableHeader className="bg-muted sticky top-0 z-10 shadow-sm">

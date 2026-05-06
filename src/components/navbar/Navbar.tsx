@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/database/supabase/Client";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { createUserRepository } from "@/database/repositories";
+import { BotonTema } from "../home/BotonTema";
 
 export default function Navbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -127,7 +128,7 @@ export default function Navbar() {
   const cerrarMenu = () => setMenuAbierto(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white border-b shadow-sm">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-background border-b shadow-sm">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Lado Izquierdo: Logo y Enlaces de Escritorio */}
         <div className="flex items-center gap-6">
@@ -171,7 +172,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-4">
           {isAuthenticated ? (
             <>
-              <Badge className="hidden md:flex bg-gray-50 text-gray-500 border-gray-200">
+              <Badge className="hidden md:flex bg-muted text-muted-foreground border-border">
                 {rol === 'AdminGeneral' ? 'Súper Admin' : rol === 'AdminUser' ? 'Admin Usuario' : 'Miembro'}
               </Badge>
 
@@ -181,7 +182,7 @@ export default function Navbar() {
                     key={avatar}
                     src={avatar}
                     alt={`Avatar de ${nombre}`}
-                    className="h-7 w-7 rounded-full object-cover border border-gray-200"
+                    className="h-7 w-7 rounded-full object-cover border border-border"
                   />
                 ) : (
                   <UserCircle className="h-7 w-7 text-gray-400" />
@@ -194,7 +195,7 @@ export default function Navbar() {
               {/* MENU DESPLEGABLE DE ALERTAS DINÁMICO */}
               {rol !== 'AdminGeneral' && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none">
+                  <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-muted transition-colors focus:outline-none">
                     <Bell className="h-6 w-6 text-gray-600" />
                     {alertasPendientes > 0 && (
                       <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full border-white border-2">
@@ -214,7 +215,7 @@ export default function Navbar() {
                           </DropdownMenuItem>
                         ))
                       ) : (
-                        <DropdownMenuItem className="text-gray-500 py-4 text-center justify-center">
+                        <DropdownMenuItem className="text-muted-foreground py-4 text-center justify-center">
                           Tu despensa está al día.
                         </DropdownMenuItem>
                       )}
@@ -237,6 +238,7 @@ export default function Navbar() {
               </Link>
             </div>
           )}
+          <BotonTema/>
 
           <Button
             variant="ghost"
@@ -244,14 +246,14 @@ export default function Navbar() {
             className="md:hidden ml-1"
             onClick={() => setMenuAbierto(!menuAbierto)}
           >
-            {menuAbierto ? <X className="h-6 w-6 text-gray-800" /> : <Menu className="h-6 w-6 text-gray-800" />}
+            {menuAbierto ? <X className="h-6 w-6 text-foreground" /> : <Menu className="h-6 w-6 text-foreground" />}
           </Button>
         </div>
       </div>
 
       {/* MENÚ MÓVIL DESPLEGABLE */}
       {menuAbierto && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg flex flex-col py-4 px-6 gap-4 z-50">
+        <div className="md:hidden absolute top-full left-0 w-full bg-background border-t border-gray-100 shadow-lg flex flex-col py-4 px-6 gap-4 z-50">
           {isAuthenticated ? (
             <>
               {rol === 'AdminGeneral' ? (
@@ -276,7 +278,7 @@ export default function Navbar() {
                 </>
               )}
 
-              <div className="h-px bg-gray-100 my-2"></div>
+              <div className="h-px bg-muted my-2"></div>
 
               <button
                 onClick={() => { cerrarMenu(); handleLogout(); }}

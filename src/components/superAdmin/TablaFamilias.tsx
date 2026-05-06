@@ -43,9 +43,9 @@ export default function TablaFamilias({ familias, onPrepararEliminacion,onVerUsu
         />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-background rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50">
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead className="py-4 px-6">Nombre Familia</TableHead>
               <TableHead>Gestor de Cuenta</TableHead>
@@ -64,7 +64,7 @@ export default function TablaFamilias({ familias, onPrepararEliminacion,onVerUsu
               familiasFiltradas.map((f) => {
                 const jefe = obtenerJefe(f.profiles);
                 return (
-                  <TableRow key={f.id} className="hover:bg-slate-50/50 transition-colors">
+                  <TableRow key={f.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell className="px-6 font-bold text-slate-800">{f.nombre}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">

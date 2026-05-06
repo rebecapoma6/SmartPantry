@@ -101,7 +101,7 @@ export default function ListaCompras() {
     return (
         <div className="max-w-4xl mx-auto py-6 px-2">
             <Card className="shadow-md border-slate-100 rounded-2xl overflow-hidden flex flex-col">
-                <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
+                <CardHeader className="bg-muted/50 border-b border-slate-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
                     <div>
                         <CardTitle className="text-xl flex items-center gap-2.5 text-slate-800">
                             <div className="p-2 bg-amber-100 rounded-lg">
@@ -138,7 +138,7 @@ export default function ListaCompras() {
                     ) : (
                         <div className="divide-y divide-slate-100">
                             {productosFaltantes.map((prod) => (
-                                <div key={prod.id} className="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                <div key={prod.id} className="p-5 flex items-center justify-between hover:bg-muted transition-colors">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
                                             <AlertTriangle className="w-5 h-5 text-red-500" />

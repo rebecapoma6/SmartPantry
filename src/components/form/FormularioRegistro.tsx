@@ -128,10 +128,10 @@ export default function FormularioRegistro() {
           🎉 <strong>¡Invitación detectada!</strong> Al registrarte te unirás directamente a la despensa de la familia.
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto p-6 bg-white rounded-xl shadow-xl/30  border">
+      <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto p-6 bg-background rounded-xl shadow-xl/30  border">
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-green-700">Crear Cuenta</h2>
-          <p className="text-sm text-gray-500">Únete a SmartPantry y organiza tu despensa</p>
+          <p className="text-sm text-muted-foreground">Únete a SmartPantry y organiza tu despensa</p>
         </div>
 
         <div className="flex justify-center mb-6">

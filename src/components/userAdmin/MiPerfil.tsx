@@ -154,11 +154,11 @@ export default function MiPerfil() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* COLUMNA IZQUIERDA: IDENTIDAD */}
-        <Card className="border border-slate-100 shadow-md overflow-hidden lg:col-span-4 rounded-xl bg-white">
+        <Card className="border border-slate-100 shadow-md overflow-hidden lg:col-span-4 rounded-xl bg-background">
           <div className="h-24 bg-gradient-to-tr from-green-600 via-emerald-500 to-teal-400"></div>
           <CardContent className="px-5 pb-6 relative -mt-12 flex flex-col items-center text-center">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full border-4 border-white bg-slate-50 flex items-center justify-center overflow-hidden shadow-md ring-2 ring-green-50">
+              <div className="w-24 h-24 rounded-full border-4 border-white bg-muted flex items-center justify-center overflow-hidden shadow-md ring-2 ring-green-50">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -192,7 +192,7 @@ export default function MiPerfil() {
         <div className="lg:col-span-8 space-y-4">
 
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
+            <CardHeader className="bg-muted/50 border-b border-slate-100 py-3 px-5">
               <CardTitle className="text-base flex items-center gap-2 text-slate-800">
                 <div className="p-1.5 bg-green-100 rounded-md">
                   <UserIcon className="w-4 h-4 text-green-600" />
@@ -205,7 +205,7 @@ export default function MiPerfil() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Correo Electrónico</Label>
-                    <Input type="email" value={email} disabled className="bg-slate-50 text-slate-400 cursor-not-allowed h-9 border-slate-200 font-medium text-sm" />
+                    <Input type="email" value={email} disabled className="bg-muted text-slate-400 cursor-not-allowed h-9 border-slate-200 font-medium text-sm" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nombre Completo</Label>
@@ -226,10 +226,10 @@ export default function MiPerfil() {
           </Card>
 
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-3 px-5">
+            <CardHeader className="bg-muted/50 border-b border-slate-100 py-3 px-5">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
                 <CardTitle className="text-base flex items-center gap-2 text-slate-800">
-                  <div className="p-1.5 bg-slate-100 rounded-md">
+                  <div className="p-1.5 bg-muted rounded-md">
                     <ShieldCheck className="w-4 h-4 text-slate-600" />
                   </div>
                   Seguridad
@@ -272,7 +272,7 @@ export default function MiPerfil() {
                     type="submit"
                     variant="outline"
                     disabled={botonPasswordDeshabilitado}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 h-9 px-5 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="border-slate-300 text-slate-700 hover:bg-muted hover:text-slate-900 h-9 px-5 text-sm font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Actualizar Contraseña
                   </Button>

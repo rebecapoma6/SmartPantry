@@ -67,39 +67,15 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Lado Derecho: Imagen y Chips flotantes */}
           <div className="relative mt-8 md:mt-0 lg:ml-10">
-            {/* Imagen principal (Reemplaza el src con la tuya de Figma luego) */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 aspect-[4/3] md:aspect-auto md:h-[500px] bg-gray-100">
+            {/* Imagen principal (hero) */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 aspect-[4/3] md:aspect-auto md:h-[500px] bg-muted">
               <img 
                 src={despensa}
                 className="w-full h-full object-cover"
               />
             </div>
-
-            {/* Tarjeta Flotante Superior (Alertas) */}
-            <div className="absolute -top-6 -right-4 md:-right-8 bg-white p-4 rounded-xl shadow-xl border border-gray-100 flex items-center gap-4 animate-bounce-slow">
-              <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
-                <Bell className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-gray-900">3 Alertas</p>
-                <p className="text-xs text-gray-500">Productos por vencer</p>
-              </div>
-            </div>
-
-            {/* Tarjeta Flotante Inferior (Productos) */}
-            <div className="absolute -bottom-6 -left-4 md:-left-8 bg-white p-4 rounded-xl shadow-xl border border-gray-100 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <Package className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-gray-900">248 Productos</p>
-                <p className="text-xs text-gray-500">Organizados</p>
-              </div>
-            </div>
           </div>
-
         </div>
       </div>
     </section>

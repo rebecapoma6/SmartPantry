@@ -79,7 +79,7 @@ export default function DashboardSAdmin() {
                 </CardContent></Card>
             </div>
 
-            <Card className="border-none shadow-sm bg-white">
+            <Card className="border-none shadow-sm bg-background">
                 <CardHeader>
                     <CardTitle className="text-lg font-bold text-slate-700">Resumen de Crecimiento ({new Date().getFullYear()})</CardTitle>
                 </CardHeader>

@@ -76,7 +76,7 @@ export default function GestionCategorias() {
             <div className="flex flex-col gap-3">
                 <div>
                     <p className="text-sm font-semibold text-gray-900">¿Eliminar "{nombre}"?</p>
-                    <p className="text-xs text-gray-500 mt-1">Los productos asociados podrían quedar sin categoría.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Los productos asociados podrían quedar sin categoría.</p>
                 </div>
                 <div className="flex gap-2 justify-end">
                     <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => toast.dismiss(t.id)}>
@@ -150,7 +150,7 @@ export default function GestionCategorias() {
                     ) : (
                         <ul className="divide-y">
                             {categorias.map((cat) => (
-                                <li key={cat.id} className="flex justify-between items-center p-3 px-4 hover:bg-white transition-colors bg-transparent">
+                                <li key={cat.id} className="flex justify-between items-center p-3 px-4 hover:bg-card transition-colors bg-transparent">
                                     <span className="text-sm font-medium text-slate-700">{cat.nombre}</span>
                                     <Button 
                                         variant="ghost" 

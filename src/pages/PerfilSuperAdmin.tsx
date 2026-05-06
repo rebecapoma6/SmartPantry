@@ -150,7 +150,7 @@ export default function PerfilSuperAdmin() {
           <div className="h-28 bg-gradient-to-r from-success to-primary"></div>
           <CardContent className="px-6 pb-6 relative -mt-14 flex flex-col items-center text-center">
             <div className="relative group">
-              <div className="w-28 h-28 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center overflow-hidden shadow-md">
+              <div className="w-28 h-28 rounded-full border-4 border-white bg-muted flex items-center justify-center overflow-hidden shadow-md">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -187,7 +187,7 @@ export default function PerfilSuperAdmin() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-500 uppercase font-semibold">Correo Electrónico</Label>
-                    <Input type="email" value={email} disabled className="bg-slate-50 text-slate-500 cursor-not-allowed h-9" />
+                    <Input type="email" value={email} disabled className="bg-muted text-slate-500 cursor-not-allowed h-9" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-500 uppercase font-semibold">Nombre Completo</Label>
@@ -228,7 +228,7 @@ export default function PerfilSuperAdmin() {
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Button type="submit" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 h-9">
+                  <Button type="submit" variant="outline" className="border-slate-300 text-slate-700 hover:bg-muted h-9">
                     Cambiar Contraseña
                   </Button>
                 </div>

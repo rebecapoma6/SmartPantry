@@ -19,7 +19,7 @@ export default function ComenzarAhora() {
         <div className="flex flex-col items-center gap-4">
           <Link 
             to="/registro" 
-            className="inline-flex items-center gap-2 bg-white text-green-700 hover:bg-gray-50 px-8 py-4 rounded-xl font-bold text-lg transition-colors shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 bg-card text-green-700 hover:bg-muted px-8 py-4 rounded-xl font-bold text-lg transition-colors shadow-lg hover:shadow-xl"
           >
             Comenzar Gratis
             <ArrowRight className="w-5 h-5" />

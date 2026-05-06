@@ -90,7 +90,7 @@ export default function GestionMiembros() {
             <div className="flex flex-col gap-3">
                 <div>
                     <p className="text-sm font-semibold text-gray-900">¿Expulsar a {nombre}?</p>
-                    <p className="text-xs text-gray-500 mt-1">Perderá acceso a la despensa compartida.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Perderá acceso a la despensa compartida.</p>
                 </div>
                 <div className="flex gap-2 justify-end">
                     <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => toast.dismiss(t.id)}>
@@ -145,7 +145,7 @@ export default function GestionMiembros() {
                         <Input
                             readOnly
                             value={linkInvitacion || "Generando enlace..."}
-                            className="bg-white border-blue-200 text-slate-600 font-mono text-sm"
+                            className="bg-background border-blue-200 text-slate-600 font-mono text-sm"
                         />
                         <Button onClick={handleCopiarLink} className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
                             <LinkIcon className="w-4 h-4 mr-2" /> Copiar Enlace
@@ -167,7 +167,7 @@ export default function GestionMiembros() {
                     ) : (
                         <ul className="divide-y divide-slate-100 border rounded-lg overflow-hidden">
                             {miembros.map((miembro) => (
-                                <li key={miembro.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+                                <li key={miembro.id} className="flex items-center justify-between p-4 hover:bg-muted transition-colors">
 
                                     {/* Info del Miembro */}
                                     <div className="flex items-center gap-4">
@@ -182,7 +182,7 @@ export default function GestionMiembros() {
                                             <p className="font-semibold text-slate-900 flex items-center gap-2">
                                                 {miembro.nombre}
                                                 {miembro.id === sessionUser?.profile?.id && (
-                                                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-normal">Tú</span>
+                                                    <span className="text-xs bg-muted text-slate-500 px-2 py-0.5 rounded-full font-normal">Tú</span>
                                                 )}
                                             </p>
                                             <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">

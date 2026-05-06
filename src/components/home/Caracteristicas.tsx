@@ -13,7 +13,7 @@ export default function Caracteristicas() {
   ];
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-20 bg-card overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Título animado */}
@@ -27,7 +27,7 @@ export default function Caracteristicas() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Todo lo que necesitas en un solo lugar
           </h2>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-muted-foreground">
             SmartPantry te ofrece todas las herramientas para mantener tu despensa perfectamente organizada.
           </p>
         </motion.div>
@@ -56,7 +56,7 @@ export default function Caracteristicas() {
                   </CardHeader>
                   
                   <CardContent>
-                    <CardDescription className="text-gray-500 leading-relaxed text-sm">
+                    <CardDescription className="text-muted-foreground leading-relaxed text-sm">
                       {item.descripcion}
                     </CardDescription>
                   </CardContent>

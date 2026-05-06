@@ -33,7 +33,7 @@ export default function ImageInput({ name, onFileSelect, defaultImageUrl = null,
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="w-24 h-24 rounded-full border-2 border-dashed border-green-500 flex items-center justify-center overflow-hidden bg-gray-50">
+      <div className="w-24 h-24 rounded-full border-2 border-dashed border-green-500 flex items-center justify-center overflow-hidden bg-muted">
         {previewUrl ? (
           <img
             src={previewUrl}

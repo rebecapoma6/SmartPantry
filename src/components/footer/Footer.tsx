@@ -5,7 +5,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-sidebar-foreground border-t border-gray-200 mt-auto">
+    <footer className="bg-sidebar-foreground border-t border-border mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
@@ -17,7 +17,7 @@ export default function Footer() {
               </div>
               <span className="text-xl font-bold text-secondary">SmartPantry</span>
             </Link>
-            <p className="text-sm text-gray-500 max-w-xs">
+            <p className="text-sm text-muted-foreground max-w-xs">
               Tu despensa inteligente y semáforo de inventario. Gestiona tus productos y evita que la comida se eche a perder.
             </p>
           </div>
@@ -29,17 +29,17 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/" className="text-sm text-gray-500 hover:text-green-600 transition-colors">
+                <Link to="/" className="text-sm text-muted-foreground hover:text-green-600 transition-colors">
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link to="/registro" className="text-sm text-gray-500 hover:text-green-600 transition-colors">
+                <Link to="/registro" className="text-sm text-muted-foreground hover:text-green-600 transition-colors">
                   Crear Cuenta
                 </Link>
               </li>
               <li>
-                <Link to="/iniciarSesion" className="text-sm text-gray-500 hover:text-green-600 transition-colors">
+                <Link to="/iniciarSesion" className="text-sm text-muted-foreground hover:text-green-600 transition-colors">
                   Iniciar Sesión
                 </Link>
               </li>
@@ -52,7 +52,7 @@ export default function Footer() {
               Contacto
             </h3>
             <ul className="space-y-3 mb-4">
-              <li className="flex items-center gap-2 text-sm text-gray-500">
+              <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="w-4 h-4" />
                 <span>hola@smartpantry.com</span>
               </li>

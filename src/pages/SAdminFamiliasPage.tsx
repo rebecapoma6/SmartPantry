@@ -46,7 +46,7 @@ export default function SAdminFamiliasPage() {
     };
 
     return (
-      <div className="p-6 pt-24 max-w-7xl mx-auto space-y-6 bg-slate-50 min-h-screen">
+      <div className="p-6 pt-24 max-w-7xl mx-auto space-y-6 bg-muted min-h-screen">
             <div>
                 <h1 className="text-3xl font-bold text-slate-900">Gestión de Familias</h1>
                 <p className="text-slate-500 mt-1">Directorio maestro y administración de cuentas</p>
@@ -86,7 +86,7 @@ export default function SAdminFamiliasPage() {
                                             <div className="flex flex-col">
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-semibold text-slate-800">{perfil.nombre || "Usuario"}</span>
-                                                    <Badge className={`px-2 py-0 border-none text-[10px] ${perfil.rol_asignado === 'AdminUser' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}`}>
+                                                    <Badge className={`px-2 py-0 border-none text-[10px] ${perfil.rol_asignado === 'AdminUser' ? 'bg-blue-100 text-blue-700' : 'bg-muted text-slate-600'}`}>
                                                         {perfil.rol_asignado === 'AdminUser' ? 'Gestor' : 'Invitado'}
                                                     </Badge>
                                                 </div>

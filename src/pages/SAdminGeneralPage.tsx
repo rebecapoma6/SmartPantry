@@ -3,7 +3,7 @@ import DashboardSAdmin from "@/components/superAdmin/DashboardSAdmin";
 export default function AdminGeneralPage() {
 
     return (
-        <div className="p-6 pt-24 max-w-7xl mx-auto space-y-8 bg-slate-50 min-h-screen">
+        <div className="p-6 pt-24 max-w-7xl mx-auto space-y-8 bg-muted min-h-screen">
             
             {/* CABECERA */}
             <div className="flex justify-between items-start">
