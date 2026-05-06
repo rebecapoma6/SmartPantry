@@ -10,7 +10,7 @@ export default function AdminUserPage() {
 
     return (
         <div className="p-6 pt-24 max-w-5xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-foreground">
                 {esGestor ? "Ajustes de Familia" : "Mi Perfil"}
             </h1>
 

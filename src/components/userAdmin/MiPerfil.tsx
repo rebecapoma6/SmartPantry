@@ -147,7 +147,7 @@ export default function MiPerfil() {
     return nom.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
   };
 
-  if (loading) return <div className="p-10 text-center text-slate-500 font-medium animate-pulse">Cargando tu perfil...</div>;
+  if (loading) return <div className="p-10 text-center text-muted-foreground font-medium animate-pulse">Cargando tu perfil...</div>;
 
   return (
     <div className="max-w-6xl mx-auto py-4 px-2">
@@ -173,7 +173,7 @@ export default function MiPerfil() {
             </div>
 
             <h2 className="text-xl font-bold text-slate-800 mt-4">{nombre || "Usuario"}</h2>
-            <p className="text-slate-500 text-sm mt-0.5">{email}</p>
+            <p className="text-muted-foreground text-sm mt-0.5">{email}</p>
             {esGestor ? (
               <div className="flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 shadow-sm">
                 <Home className="w-3.5 h-3.5" />
@@ -204,15 +204,15 @@ export default function MiPerfil() {
               <form onSubmit={handleActualizarDatos} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Correo Electrónico</Label>
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Correo Electrónico</Label>
                     <Input type="email" value={email} disabled className="bg-muted text-slate-400 cursor-not-allowed h-9 border-slate-200 font-medium text-sm" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nombre Completo</Label>
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Nombre Completo</Label>
                     <Input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej. Micaela Pérez" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Teléfono Móvil</Label>
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Teléfono Móvil</Label>
                     <Input value={movil} onChange={(e) => setMovil(e.target.value)} placeholder="Ej. +34 600 000 000" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
                   </div>
                 </div>
@@ -234,14 +234,14 @@ export default function MiPerfil() {
                   </div>
                   Seguridad
                 </CardTitle>
-                <CardDescription className="text-xs text-slate-500">Actualiza tu contraseña para proteger tu despensa.</CardDescription>
+                <CardDescription className="text-xs text-muted-foreground">Actualiza tu contraseña para proteger tu despensa.</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-5">
               <form onSubmit={handleActualizarPassword} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5 relative">
-                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nueva Contraseña</Label>
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Nueva Contraseña</Label>
                     <Input
                       type="password"
                       value={nuevaPassword}
@@ -252,7 +252,7 @@ export default function MiPerfil() {
                     />
                   </div>
                   <div className="space-y-1.5 relative">
-                    <Label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider flex justify-between">
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider flex justify-between">
                       Confirmar Contraseña
                       {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Coinciden</span>}
                       {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3" /> No coinciden</span>}

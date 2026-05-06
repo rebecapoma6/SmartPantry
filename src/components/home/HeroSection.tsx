@@ -16,13 +16,13 @@ export default function HeroSection() {
             </div>
 
             {/* Título Principal */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1]">
               Tu Despensa, <br />
               <span className="text-green-600">Siempre Organizada</span>
             </h1>
 
             {/* Subtítulo */}
-            <p className="text-lg text-gray-600 max-w-lg leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
               Controla tus productos, fechas de caducidad y optimiza tus compras con SmartPantry. La solución inteligente para una cocina sin desperdicios.
             </p>
 
@@ -60,8 +60,8 @@ export default function HeroSection() {
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <span className="text-sm font-medium text-gray-600">
-                  <span className="text-gray-900 font-bold">1,000+</span> usuarios confían en nosotros
+                <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-muted-foreground font-bold">1,000+</span> usuarios confían en nosotros
                 </span>
               </div>
             </div>

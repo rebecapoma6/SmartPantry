@@ -86,8 +86,8 @@ export default function Footer() {
             © {currentYear} SmartPantry. Todos los derechos reservados.
           </p>
           <div className="flex gap-4 text-sm text-gray-400">
-            <a href="#" className="hover:text-gray-600">Privacidad</a>
-            <a href="#" className="hover:text-gray-600">Términos</a>
+            <a href="#" className="hover:text-muted-foreground">Privacidad</a>
+            <a href="#" className="hover:text-muted-foreground">Términos</a>
           </div>
         </div>
       </div>

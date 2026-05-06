@@ -173,7 +173,7 @@ export default function ControlFinanciero() {
         return COLORES_FIJOS[nombreCategoria] || COLORES_EXTRA[index % COLORES_EXTRA.length];
     };
 
-    if (cargando) return <div className="text-center py-8 text-slate-500 animate-pulse">Calculando presupuesto familiar...</div>;
+    if (cargando) return <div className="text-center py-8 text-muted-foreground animate-pulse">Calculando presupuesto familiar...</div>;
 
     return (
         <div className="space-y-6">
@@ -183,7 +183,7 @@ export default function ControlFinanciero() {
                 <Card className="shadow-sm border-l-4 border-l-blue-500">
                     <CardContent className="p-4 flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-slate-500 font-medium mb-1">Compras del Mes</p>
+                            <p className="text-sm text-muted-foreground font-medium mb-1">Compras del Mes</p>
                             <h3 className="text-2xl font-bold text-slate-800">{gastoMensual.total.toFixed(2)}€</h3>
                             {renderTendencia(gastoMensual.tendencia, "vs mes pasado")}
                         </div>
@@ -196,7 +196,7 @@ export default function ControlFinanciero() {
                 <Card className="shadow-sm border-l-4 border-l-green-500">
                     <CardContent className="p-4 flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-slate-500 font-medium mb-1">Dinero en Despensa</p>
+                            <p className="text-sm text-muted-foreground font-medium mb-1">Dinero en Despensa</p>
                             <h3 className="text-2xl font-bold text-slate-800">{inversionTotal.toFixed(2)}€</h3>
                             <p className="text-xs text-green-600 flex items-center mt-1 font-medium">
                                 Valor de mis provisiones
@@ -211,7 +211,7 @@ export default function ControlFinanciero() {
                 <Card className="shadow-sm border-l-4 border-l-purple-500">
                     <CardContent className="p-4 flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-slate-500 font-medium mb-1">Compras de la Semana</p>
+                            <p className="text-sm text-muted-foreground font-medium mb-1">Compras de la Semana</p>
                             <h3 className="text-2xl font-bold text-slate-800">{gastoSemanal.total.toFixed(2)}€</h3>
                             {renderTendencia(gastoSemanal.tendencia, "vs semana anterior")}
                         </div>
@@ -319,14 +319,14 @@ export default function ControlFinanciero() {
                 </CardHeader>
                 <CardContent>
                     {topInversion.length === 0 ? (
-                        <p className="text-sm text-slate-500 text-center py-4">Tu despensa está vacía.</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">Tu despensa está vacía.</p>
                     ) : (
                         <ul className="space-y-4">
                             {topInversion.map((prod, index) => (
                                 <li key={index} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0">
                                     <div>
                                         <p className="font-semibold text-slate-700 text-sm">{prod.nombre}</p>
-                                        <p className="text-xs text-slate-500">Cantidad: {prod.cantidad}</p>
+                                        <p className="text-xs text-muted-foreground">Cantidad: {prod.cantidad}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="font-bold text-slate-800">{prod.valorTotal.toFixed(2)}€</span>

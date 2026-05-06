@@ -152,7 +152,7 @@ export default function FormInicioSesion() {
       </Button>
 
       <div className="text-center mt-4">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           ¿No tienes una cuenta?{" "}
           <Link to="/registro" className="text-green-600 font-semibold hover:underline">
             Regístrate aquí

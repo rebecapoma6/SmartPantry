@@ -56,7 +56,7 @@ export default function TablaFamilias({ familias, onPrepararEliminacion,onVerUsu
           <TableBody>
             {familiasFiltradas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-slate-500">
+                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                   No se encontraron familias que coincidan con "{busqueda}".
                 </TableCell>
               </TableRow>

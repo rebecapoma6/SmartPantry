@@ -75,7 +75,7 @@ export default function GestionCategorias() {
         toast((t) => (
             <div className="flex flex-col gap-3">
                 <div>
-                    <p className="text-sm font-semibold text-gray-900">¿Eliminar "{nombre}"?</p>
+                    <p className="text-sm font-semibold text-foreground">¿Eliminar "{nombre}"?</p>
                     <p className="text-xs text-muted-foreground mt-1">Los productos asociados podrían quedar sin categoría.</p>
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -146,7 +146,7 @@ export default function GestionCategorias() {
                 {/* Lista de categorías con Scroll (Justo lo que querías) */}
                 <div className="border rounded-md max-h-[200px] overflow-y-auto">
                     {categorias.length === 0 ? (
-                        <p className="text-center p-8 text-slate-500">No hay categorías personalizadas. ¡Crea la primera arriba!</p>
+                        <p className="text-center p-8 text-muted-foreground">No hay categorías personalizadas. ¡Crea la primera arriba!</p>
                     ) : (
                         <ul className="divide-y">
                             {categorias.map((cat) => (

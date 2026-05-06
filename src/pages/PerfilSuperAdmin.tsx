@@ -131,14 +131,14 @@ export default function PerfilSuperAdmin() {
     return nom.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
   };
 
-  if (loading) return <div className="p-10 text-center text-slate-500">Cargando perfil...</div>;
+  if (loading) return <div className="p-10 text-center text-muted-foreground">Cargando perfil...</div>;
 
   return (
     <div className="max-w-5xl mx-auto p-6 pt-24 min-h-screen">
       
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">Mi Perfil</h1>
-        <p className="text-slate-500 mt-1">Configuración de cuenta Súper Admin de SmartPantry</p>
+        <p className="text-muted-foreground mt-1">Configuración de cuenta Súper Admin de SmartPantry</p>
       </div>
 
       {/* GRID COMPACTO: 1 Columna en móvil, 3 Columnas en pantallas grandes */}
@@ -186,15 +186,15 @@ export default function PerfilSuperAdmin() {
               <form onSubmit={handleActualizarDatos} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Correo Electrónico</Label>
-                    <Input type="email" value={email} disabled className="bg-muted text-slate-500 cursor-not-allowed h-9" />
+                    <Label className="text-xs text-muted-foreground uppercase font-semibold">Correo Electrónico</Label>
+                    <Input type="email" value={email} disabled className="bg-muted text-muted-foreground cursor-not-allowed h-9" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Nombre Completo</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-semibold">Nombre Completo</Label>
                     <Input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej. Micaela Pérez" className="h-9 focus-visible:ring-success" />
                   </div>
                   <div className="space-y-1.5 md:col-span-2">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Teléfono Móvil</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-semibold">Teléfono Móvil</Label>
                     <Input value={movil} onChange={(e) => setMovil(e.target.value)} placeholder="Ej. +34 600 000 000" className="h-9 focus-visible:ring-success" />
                   </div>
                 </div>
@@ -219,11 +219,11 @@ export default function PerfilSuperAdmin() {
               <form onSubmit={handleActualizarPassword} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Nueva Contraseña</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-semibold">Nueva Contraseña</Label>
                     <Input type="password" value={nuevaPassword} onChange={(e) => setNuevaPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required className="h-9 focus-visible:ring-success" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-500 uppercase font-semibold">Confirmar Contraseña</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-semibold">Confirmar Contraseña</Label>
                     <Input type="password" value={confirmarPassword} onChange={(e) => setConfirmarPassword(e.target.value)} placeholder="Repite la contraseña" required className="h-9 focus-visible:ring-success" />
                   </div>
                 </div>

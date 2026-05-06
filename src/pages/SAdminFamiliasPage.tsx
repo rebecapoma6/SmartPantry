@@ -49,7 +49,7 @@ export default function SAdminFamiliasPage() {
       <div className="p-6 pt-24 max-w-7xl mx-auto space-y-6 bg-muted min-h-screen">
             <div>
                 <h1 className="text-3xl font-bold text-slate-900">Gestión de Familias</h1>
-                <p className="text-slate-500 mt-1">Directorio maestro y administración de cuentas</p>
+                <p className="text-muted-foreground mt-1">Directorio maestro y administración de cuentas</p>
             </div>
 
             <TablaFamilias
@@ -99,7 +99,7 @@ export default function SAdminFamiliasPage() {
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-center text-slate-500 py-6">No hay usuarios registrados en esta familia.</p>
+                            <p className="text-center text-muted-foreground py-6">No hay usuarios registrados en esta familia.</p>
                         )}
                     </div>
                 </DialogContent>

@@ -95,7 +95,7 @@ export default function ListaCompras() {
     };
 
     if (loading) {
-        return <div className="p-10 text-center text-slate-500 animate-pulse">Analizando tu despensa...</div>;
+        return <div className="p-10 text-center text-muted-foreground animate-pulse">Analizando tu despensa...</div>;
     }
 
     return (
@@ -109,7 +109,7 @@ export default function ListaCompras() {
                             </div>
                             Lista de Compras Inteligente
                         </CardTitle>
-                        <CardDescription className="text-sm mt-1.5 text-slate-500">
+                        <CardDescription className="text-sm mt-1.5 text-muted-foreground">
                             Generada automáticamente basada en los niveles de stock de tu despensa.
                         </CardDescription>
                     </div>
@@ -131,7 +131,7 @@ export default function ListaCompras() {
                                 <CheckCircle2 className="w-10 h-10 text-green-500" />
                             </div>
                             <h3 className="text-lg font-bold text-slate-800 mb-1">¡Tu despensa está a tope!</h3>
-                            <p className="text-slate-500 text-sm max-w-sm">
+                            <p className="text-muted-foreground text-sm max-w-sm">
                                 No tienes ningún producto por debajo del stock mínimo. Tienes todo lo necesario para sobrevivir.
                             </p>
                         </div>
@@ -146,7 +146,7 @@ export default function ListaCompras() {
                                         <div>
                                             <h4 className="font-semibold text-slate-800">{prod.nombre}</h4>
                                             {/* 🔥 5. Mostramos el nombre de la categoría jalado desde la otra tabla */}
-                                            <p className="text-xs text-slate-500 mt-0.5">
+                                            <p className="text-xs text-muted-foreground mt-0.5">
                                                 Categoría: {prod.categorias?.nombre || 'Sin categoría'}
                                             </p>
                                         </div>
@@ -154,7 +154,7 @@ export default function ListaCompras() {
 
                                     <div className="flex items-center gap-6">
                                         <div className="text-right hidden sm:block">
-                                            <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Stock Actual</p>
+                                            <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Stock Actual</p>
                                             <div className="flex items-center justify-end gap-2">
                                                 <span className="font-bold text-red-600">{prod.cantidad}</span>
                                                 <span className="text-slate-400 text-xs">/ min {prod.stock_minimo}</span>

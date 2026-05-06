@@ -88,7 +88,7 @@ export default function ModalCategorias({ abierto, onClose, onCategoriasActualiz
         toast((t) => (
             <div className="flex flex-col gap-3">
                 <div>
-                    <p className="text-sm font-semibold text-gray-900">¿Eliminar "{nombre}"?</p>
+                    <p className="text-sm font-semibold text-foreground">¿Eliminar "{nombre}"?</p>
                     <p className="text-xs text-muted-foreground mt-1">Los productos asociados podrían quedar sin categoría.</p>
                 </div>
                 <div className="flex gap-2 justify-end">

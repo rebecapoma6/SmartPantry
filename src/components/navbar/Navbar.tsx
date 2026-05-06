@@ -142,7 +142,7 @@ export default function Navbar() {
 
           {/* MENÚ DE ESCRITORIO */}
           {isAuthenticated && (
-            <div className="hidden md:flex gap-4 text-sm font-medium text-gray-600 items-center">
+            <div className="hidden md:flex gap-4 text-sm font-medium text-muted-foreground items-center">
               {rol === 'AdminGeneral' ? (
                 <>
                   <Link to="/admin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
@@ -196,7 +196,7 @@ export default function Navbar() {
               {rol !== 'AdminGeneral' && (
                 <DropdownMenu>
                   <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-muted transition-colors focus:outline-none">
-                    <Bell className="h-6 w-6 text-gray-600" />
+                    <Bell className="h-6 w-6 text-muted-foreground" />
                     {alertasPendientes > 0 && (
                       <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full border-white border-2">
                         {alertasPendientes}
@@ -225,7 +225,7 @@ export default function Navbar() {
               )}
 
               <Button variant="ghost" size="icon" onClick={handleLogout} title="Cerrar sesión" className="hidden md:flex">
-                <LogOut className="h-5 w-5 text-gray-600 hover:text-red-600" />
+                <LogOut className="h-5 w-5 text-muted-foreground hover:text-red-600" />
               </Button>
             </>
           ) : (

@@ -89,7 +89,7 @@ export default function GestionMiembros() {
         toast((t) => (
             <div className="flex flex-col gap-3">
                 <div>
-                    <p className="text-sm font-semibold text-gray-900">¿Expulsar a {nombre}?</p>
+                    <p className="text-sm font-semibold text-foreground">¿Expulsar a {nombre}?</p>
                     <p className="text-xs text-muted-foreground mt-1">Perderá acceso a la despensa compartida.</p>
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -161,9 +161,9 @@ export default function GestionMiembros() {
                 </CardHeader>
                 <CardContent>
                     {cargando ? (
-                        <div className="text-center py-8 text-slate-500">Cargando familia...</div>
+                        <div className="text-center py-8 text-muted-foreground">Cargando familia...</div>
                     ) : miembros.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">No hay más miembros en tu familia aún.</div>
+                        <div className="text-center py-8 text-muted-foreground">No hay más miembros en tu familia aún.</div>
                     ) : (
                         <ul className="divide-y divide-slate-100 border rounded-lg overflow-hidden">
                             {miembros.map((miembro) => (
@@ -182,10 +182,10 @@ export default function GestionMiembros() {
                                             <p className="font-semibold text-slate-900 flex items-center gap-2">
                                                 {miembro.nombre}
                                                 {miembro.id === sessionUser?.profile?.id && (
-                                                    <span className="text-xs bg-muted text-slate-500 px-2 py-0.5 rounded-full font-normal">Tú</span>
+                                                    <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-normal">Tú</span>
                                                 )}
                                             </p>
-                                            <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                                                 {miembro.rol === 'AdminUser' ? (
                                                     <><Shield className="w-3 h-3 text-success" /> Gestor</>
                                                 ) : (

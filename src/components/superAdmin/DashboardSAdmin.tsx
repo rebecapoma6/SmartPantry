@@ -67,15 +67,15 @@ export default function DashboardSAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
                     <div className="p-3 bg-blue-100 rounded-xl text-blue-600"><Users /></div>
-                    <div><p className="text-sm text-slate-500">Usuarios Totales</p><p className="text-2xl font-bold">{stats.totalUsuarios}</p></div>
+                    <div><p className="text-sm text-muted-foreground">Usuarios Totales</p><p className="text-2xl font-bold">{stats.totalUsuarios}</p></div>
                 </CardContent></Card>
                 <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
                     <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600"><Home /></div>
-                    <div><p className="text-sm text-slate-500">Familias Activas</p><p className="text-2xl font-bold">{stats.totalFamilias}</p></div>
+                    <div><p className="text-sm text-muted-foreground">Familias Activas</p><p className="text-2xl font-bold">{stats.totalFamilias}</p></div>
                 </CardContent></Card>
                 <Card className="border-none shadow-sm"><CardContent className="p-6 flex items-center gap-4">
                     <div className="p-3 bg-purple-100 rounded-xl text-purple-600"><TrendingUp /></div>
-                    <div><p className="text-sm text-slate-500">Nuevos este mes</p><p className="text-2xl font-bold">+{stats.nuevosMes}</p></div>
+                    <div><p className="text-sm text-muted-foreground">Nuevos este mes</p><p className="text-2xl font-bold">+{stats.nuevosMes}</p></div>
                 </CardContent></Card>
             </div>
 

@@ -32,10 +32,10 @@ export default function Beneficios() {
           {/* Lado Derecho: Textos y Lista */}
           <div className="w-full lg:w-1/2 space-y-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
                 Beneficios que transformarán tu cocina
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 Con SmartPantry, no solo organizas tu despensa, sino que transformas completamente tu forma de gestionar la comida en casa.
               </p>
             </div>

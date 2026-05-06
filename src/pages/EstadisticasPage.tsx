@@ -63,7 +63,7 @@ export default function EstadisticasPage() {
                 </div>
                 <div>
                     <h1 className="text-xl font-bold text-slate-900">Dashboard SmartPantry</h1>
-                    <p className="text-slate-500">Analíticas y valorización de tu despensa.</p>
+                    <p className="text-muted-foreground">Analíticas y valorización de tu despensa.</p>
                 </div>
             </div>
 
@@ -111,7 +111,7 @@ export default function EstadisticasPage() {
                             </CardHeader>
                             <CardContent className="h-[320px] flex flex-col items-center relative">
                                 <div className="absolute top-[40%] left-1/2 -translate-x-1/2 text-center pointer-events-none z-10">
-                                    <p className="text-xs text-slate-500 uppercase">Total en Despensa</p>
+                                    <p className="text-xs text-muted-foreground uppercase">Total en Despensa</p>
                                     <p className="text-2xl font-bold text-slate-800">{dineroTotal.toFixed(0)}€</p>
                                 </div>
 

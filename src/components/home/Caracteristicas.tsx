@@ -24,7 +24,7 @@ export default function Caracteristicas() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Todo lo que necesitas en un solo lugar
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -50,7 +50,7 @@ export default function Caracteristicas() {
                     <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                       <Icono className="w-6 h-6 text-green-600" />
                     </div>
-                    <CardTitle className="text-xl text-gray-900">
+                    <CardTitle className="text-xl text-foreground">
                       {item.titulo}
                     </CardTitle>
                   </CardHeader>
