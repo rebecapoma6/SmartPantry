@@ -30,6 +30,7 @@
 //   },
 //   "include": ["src"]
 // }
+
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
@@ -56,9 +57,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     
-    /* 🔥 LA SOLUCIÓN: Silenciamos la advertencia para que Vercel te deje compilar */
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
