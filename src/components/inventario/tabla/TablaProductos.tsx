@@ -124,7 +124,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                 </TableCell>
 
                 <TableCell>
-                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium border border-green-200">
+                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-900/50 text-xs font-medium">
                     {prod.categorias?.nombre || "Sin categoría"}
                   </span>
                 </TableCell>
@@ -134,7 +134,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
 
                 <TableCell className="text-foreground">{prod.precio} €</TableCell>
 
-                <TableCell className={`text-center font-bold ${prod.cantidad === 0 ? 'text-red-600' : 'text-foreground'}`}>
+                <TableCell className={`text-center font-bold ${prod.cantidad === 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
                   {prod.cantidad}
                 </TableCell>
 
@@ -153,7 +153,7 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                   <Button
                     variant="outline"
                     size="icon"
-                    className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700 h-8 w-8 mr-2"
+                    className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700 dark:text-orange-500 dark:border-orange-900/50 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 h-8 w-8 mr-2"
                     onClick={() => handleDescontar(prod.id, prod.cantidad, prod.nombre)}
                     disabled={prod.cantidad === 0}
                     title="Consumir 1 unidad"
