@@ -23,7 +23,7 @@ export class SupabaseStorageRepository implements StorageRepository {
     }
 
 
-    async eliminarImagen(bucketName: string, filePath: string): Promise<{ error?: any; }> {
+    async eliminarImagen(_bucketName: string, _filePath: string): Promise<{ error?: any; }> {
         throw new Error("Method not implemented.");
     }
 

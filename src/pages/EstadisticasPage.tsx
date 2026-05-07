@@ -90,7 +90,7 @@ export default function EstadisticasPage() {
                                             <Tooltip cursor={{ fill: '#f1f5f9' }} formatter={(value) => [`${value}€`, 'Inversión']} />
                                             {/* 🔥 3. Le pasamos los colores celda por celda a las barras */}
                                             <Bar dataKey="valor" radius={[4, 4, 0, 0]}>
-                                                {datosCategoria.map((entry, index) => (
+                                                {datosCategoria.map((_, index) => (
                                                     <Cell key={`cell-${index}`} fill={COLORES[index % COLORES.length]} />
                                                 ))}
                                             </Bar>
@@ -126,7 +126,7 @@ export default function EstadisticasPage() {
                                                 dataKey="valor"
                                                 nameKey="name"
                                             >
-                                                {datosCategoria.map((entry, index) => (
+                                                {datosCategoria.map((_, index) => (
                                                     <Cell key={`cell-${index}`} fill={COLORES[index % COLORES.length]} />
                                                 ))}
                                             </Pie>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight,  Star, ShieldCheck, Bell, Package } from "lucide-react";
+import { ArrowRight,  Star, ShieldCheck} from "lucide-react";
 import despensa from "../../image/despensa.jpg";
 export default function HeroSection() {
   return (
