@@ -153,7 +153,7 @@ export default function FormularioRegistro() {
           {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
         </div>
       <div className="space-y-1">
-          <Label htmlFor="movil">Número de WhatsApp</Label>
+          <Label htmlFor="movil">Móvil</Label>
           <Input name="movil" type="tel" placeholder="+34 600 000 000" value={formData.movil}
               onChange={handleChange} 
               className={errors.nombre ? "border-red-500" : ""} 

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bell, LogOut, Menu, ShieldAlert, UserCircle, Users, X, AlertTriangle, Clock, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logo from "../../image/sinfondosmartpantry.png";
+import logo from "../../image/LogoSmartPantry.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -128,38 +128,40 @@ export default function Navbar() {
   const cerrarMenu = () => setMenuAbierto(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-background border-b shadow-sm">
-      <div className="flex items-center justify-between px-4 py-3">
+    // 🔥 Efecto cristal (Glassmorphism) y alto más estilizado
+    <nav className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b shadow-sm">
+      <div className="flex items-center justify-between px-4 h-16 sm:h-[72px]">
         {/* Lado Izquierdo: Logo y Enlaces de Escritorio */}
         <div className="flex items-center gap-6">
-          <Link to="/" onClick={cerrarMenu}>
+          <Link to="/" onClick={cerrarMenu} className="flex items-center">
+            {/* 🔥 Logo con ajuste de escala para que se vea más grande sin empujar el nav */}
             <img
               src={logo}
               alt="logo empresa"
-              className="h-16 w-auto object-contain"
+              className="h-10 sm:h-12 w-auto object-contain scale-125 sm:scale-[1.35] origin-left transition-transform hover:scale-[1.40]"
             />
           </Link>
 
           {/* MENÚ DE ESCRITORIO */}
           {isAuthenticated && (
-            <div className="hidden md:flex gap-4 text-sm font-medium text-muted-foreground items-center">
+            <div className="hidden md:flex gap-4 text-sm font-medium text-muted-foreground items-center ml-4">
               {rol === 'AdminGeneral' ? (
                 <>
-                  <Link to="/admin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
-                    <ShieldAlert className="w-4 h-4" /> DashBoard SmarthPantry
+                  <Link to="/admin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                    <ShieldAlert className="w-4 h-4" /> DashBoard SmartPantry
                   </Link>
-                  <Link to="/tablas-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
+                  <Link to="/tablas-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800 transition-colors">
                     <ShieldAlert className="w-4 h-4" /> Gestión de Familias
                   </Link>
-                  <Link to="/perfil-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800">
-                    <ShieldAlert className="w-4 h-4" /> Perfil Super Administrador
+                  <Link to="/perfil-superAdmin" className="flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                    <ShieldAlert className="w-4 h-4" /> Perfil Súper Admin
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link to="/inventario" className="hover:text-green-600">Mi Despensa</Link>
-                  <Link to="/estadisticas" className="hover:text-green-600">Estadísticas</Link>
-                  <Link to="/perfil" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2">
+                  <Link to="/inventario" className="hover:text-green-600 transition-colors">Mi Despensa</Link>
+                  <Link to="/estadisticas" className="hover:text-green-600 transition-colors">Estadísticas</Link>
+                  <Link to="/perfil" className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 ml-2 transition-colors">
                     <Users className="w-4 h-4" /> Mi Familia
                   </Link>
                 </>
@@ -172,7 +174,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-4">
           {isAuthenticated ? (
             <>
-              <Badge className="hidden md:flex bg-muted text-muted-foreground border-border">
+              <Badge className="hidden lg:flex bg-muted text-muted-foreground border-border">
                 {rol === 'AdminGeneral' ? 'Súper Admin' : rol === 'AdminUser' ? 'Admin Usuario' : 'Miembro'}
               </Badge>
 
@@ -182,10 +184,10 @@ export default function Navbar() {
                     key={avatar}
                     src={avatar}
                     alt={`Avatar de ${nombre}`}
-                    className="h-7 w-7 rounded-full object-cover border border-border"
+                    className="h-8 w-8 rounded-full object-cover border-2 border-green-100 shadow-sm"
                   />
                 ) : (
-                  <UserCircle className="h-7 w-7 text-gray-400" />
+                  <UserCircle className="h-8 w-8 text-gray-400" />
                 )}
                 <span className="text-sm font-medium text-gray-700 hidden sm:block">
                   Hola, {nombre}
@@ -195,27 +197,27 @@ export default function Navbar() {
               {/* MENU DESPLEGABLE DE ALERTAS DINÁMICO */}
               {rol !== 'AdminGeneral' && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="relative p-2 rounded-md hover:bg-muted transition-colors focus:outline-none">
-                    <Bell className="h-6 w-6 text-muted-foreground" />
+                  <DropdownMenuTrigger className="relative p-2 rounded-full hover:bg-muted transition-colors focus:outline-none">
+                    <Bell className="h-5 w-5 text-muted-foreground" />
                     {alertasPendientes > 0 && (
-                      <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full border-white border-2">
+                      <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full border-background border-2 shadow-sm">
                         {alertasPendientes}
                       </Badge>
                     )}
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 max-h-[70vh] overflow-y-auto">
+                  <DropdownMenuContent align="end" className="w-64 max-h-[70vh] overflow-y-auto mt-2">
                     <DropdownMenuGroup>
                       <DropdownMenuLabel>Notificaciones de Despensa</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {alertasPendientes > 0 ? (
                         alertas.map((alerta) => (
-                          <DropdownMenuItem key={alerta.id} className={`flex items-center py-2 ${alerta.colorText}`}>
+                          <DropdownMenuItem key={alerta.id} className={`flex items-center py-2 cursor-default ${alerta.colorText}`}>
                             {alerta.icono}
                             <span className="truncate">{alerta.mensaje}</span>
                           </DropdownMenuItem>
                         ))
                       ) : (
-                        <DropdownMenuItem className="text-muted-foreground py-4 text-center justify-center">
+                        <DropdownMenuItem className="text-muted-foreground py-4 text-center justify-center cursor-default">
                           Tu despensa está al día.
                         </DropdownMenuItem>
                       )}
@@ -224,8 +226,8 @@ export default function Navbar() {
                 </DropdownMenu>
               )}
 
-              <Button variant="ghost" size="icon" onClick={handleLogout} title="Cerrar sesión" className="hidden md:flex">
-                <LogOut className="h-5 w-5 text-muted-foreground hover:text-red-600" />
+              <Button variant="ghost" size="icon" onClick={handleLogout} title="Cerrar sesión" className="hidden md:flex rounded-full hover:bg-red-50">
+                <LogOut className="h-5 w-5 text-muted-foreground hover:text-red-600 transition-colors" />
               </Button>
             </>
           ) : (
@@ -234,11 +236,14 @@ export default function Navbar() {
                 <Button variant="ghost" className="text-green-700 hover:text-green-800 hover:bg-green-50">Iniciar sesión</Button>
               </Link>
               <Link to="/registro">
-                <Button className="bg-green-600 hover:bg-green-700 text-white">Registrarse</Button>
+                <Button className="bg-green-600 hover:bg-green-700 text-white shadow-sm transition-all hover:shadow-md">Registrarse</Button>
               </Link>
             </div>
           )}
-          <BotonTema/>
+          
+          <div className="pl-1 border-l border-border ml-1">
+            <BotonTema />
+          </div>
 
           <Button
             variant="ghost"
@@ -253,32 +258,32 @@ export default function Navbar() {
 
       {/* MENÚ MÓVIL DESPLEGABLE */}
       {menuAbierto && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-background border-t border-gray-100 shadow-lg flex flex-col py-4 px-6 gap-4 z-50">
+        <div className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-md border-t border-border shadow-xl flex flex-col py-4 px-6 gap-4 z-50 animate-in slide-in-from-top-2">
           {isAuthenticated ? (
             <>
               {rol === 'AdminGeneral' ? (
                 <>
                   <Link to="/admin" onClick={cerrarMenu} className="flex items-center gap-2 text-blue-600 font-semibold py-2">
-                    <ShieldAlert className="w-5 h-5" /> DashBoard SmarthPantry
+                    <ShieldAlert className="w-5 h-5" /> DashBoard SmartPantry
                   </Link>
                   <Link to="/tablas-superAdmin" onClick={cerrarMenu} className="flex items-center gap-2 text-blue-600 font-semibold py-2">
                     <ShieldAlert className="w-5 h-5" /> Gestión de Familias
                   </Link>
                   <Link to="/perfil-superAdmin" onClick={cerrarMenu} className="flex items-center gap-2 text-blue-600 font-semibold py-2">
-                    <ShieldAlert className="w-5 h-5" /> Perfil Super Administrador
+                    <ShieldAlert className="w-5 h-5" /> Perfil Súper Admin
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link to="/inventario" onClick={cerrarMenu} className="py-2 text-gray-700 font-medium hover:text-green-600">Mi Despensa</Link>
-                  <Link to="/estadisticas" onClick={cerrarMenu} className="py-2 text-gray-700 font-medium hover:text-green-600">Estadísticas</Link>
+                  <Link to="/inventario" onClick={cerrarMenu} className="py-2 text-foreground font-medium hover:text-green-600">Mi Despensa</Link>
+                  <Link to="/estadisticas" onClick={cerrarMenu} className="py-2 text-foreground font-medium hover:text-green-600">Estadísticas</Link>
                   <Link to="/perfil" onClick={cerrarMenu} className="flex items-center gap-2 text-green-700 font-medium py-2">
                     <Users className="w-5 h-5" /> Mi Familia
                   </Link>
                 </>
               )}
 
-              <div className="h-px bg-muted my-2"></div>
+              <div className="h-px bg-border my-2"></div>
 
               <button
                 onClick={() => { cerrarMenu(); handleLogout(); }}
