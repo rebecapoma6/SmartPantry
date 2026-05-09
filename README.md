@@ -7,9 +7,7 @@
 
 ## 📸 Vista Previa del Proyecto
 Para ver la aplicación en funcionamiento, haz clic abajo:
-> [!TIP]
-> **AQUÍ PUEDES INSERTAR TU CAPTURA DE PANTALLA O GIF DEL PROYECTO**
-> ![Captura de Pantalla del Proyecto](https://via.placeholder.com/800x450/22c55e/ffffff?text=SmartPantry+Dashboard+Preview)
+> ![Captura de Pantalla del Proyecto](./src/image/FondoPantallaSmartPantry.png)
 
 ---
 
