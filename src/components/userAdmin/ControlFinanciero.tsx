@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProductoInversion {
     nombre: string;
+    formato: string | null; // 🔥 Añadimos el formato aquí
     cantidad: number;
     valorTotal: number;
 }
@@ -48,10 +49,12 @@ export default function ControlFinanciero() {
         const cargarDatosReales = async () => {
             if (!sessionUser?.profile?.familia_id) return;
 
+            // 🔥 Añadimos "formato" en la consulta a Supabase
             const { data: productos, error } = await supabase
                 .from('productos')
                 .select(`
                     nombre, 
+                    formato, 
                     precio, 
                     cantidad, 
                     created_at, 
@@ -119,7 +122,8 @@ export default function ControlFinanciero() {
                         acumuladoSemanaAnterior += valorTotal;
                     }
 
-                    return { nombre: p.nombre, cantidad, valorTotal };
+                    // 🔥 Retornamos el formato también
+                    return { nombre: p.nombre, formato: p.formato || null, cantidad, valorTotal };
                 });
 
                 const calcularTendencia = (actual: number, anterior: number) => {
@@ -132,7 +136,6 @@ export default function ControlFinanciero() {
                     value: parseFloat(value.toFixed(2))
                 })).sort((a, b) => b.value - a.value);
 
-                // Pulimos los decimales del historial
                 const datosGraficoBarras = gastosPorMes.map(item => ({
                     mes: item.mes,
                     gasto: parseFloat(item.gasto.toFixed(2))
@@ -147,7 +150,7 @@ export default function ControlFinanciero() {
                 setGastoMensual({ total: acumuladoMesActual, tendencia: calcularTendencia(acumuladoMesActual, acumuladoMesAnterior) });
                 setGastoSemanal({ total: acumuladoSemanaActual, tendencia: calcularTendencia(acumuladoSemanaActual, acumuladoSemanaAnterior) });
                 setDatosDona(datosGraficoDona);
-                setHistorialAnual(datosGraficoBarras); // Guardamos el historial
+                setHistorialAnual(datosGraficoBarras); 
             }
             setCargando(false);
         };
@@ -325,7 +328,15 @@ export default function ControlFinanciero() {
                             {topInversion.map((prod, index) => (
                                 <li key={index} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0">
                                     <div>
-                                        <p className="font-semibold text-slate-700 text-sm">{prod.nombre}</p>
+                                        {/* 🔥 Aquí está la magia: Nombre + Formato chiquito al costado */}
+                                        <p className="font-semibold text-slate-700 text-sm flex items-center gap-2">
+                                            {prod.nombre}
+                                            {prod.formato && (
+                                                <span className="text-xs font-normal text-muted-foreground">
+                                                    ({prod.formato})
+                                                </span>
+                                            )}
+                                        </p>
                                         <p className="text-xs text-muted-foreground">Cantidad: {prod.cantidad}</p>
                                     </div>
                                     <div className="flex items-center gap-2">

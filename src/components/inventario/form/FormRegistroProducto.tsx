@@ -18,21 +18,24 @@ interface Categoria {
     nombre: string;
 }
 
-
 interface FormRegistroProductoProps {
     abierto: boolean;
     onClose: () => void;
-    producto: any | null; // Recibe el producto a editar (o null si es nuevo)
-    onRegistroExitoso: () => void; // La campanada
+    producto: any | null;
+    onRegistroExitoso: () => void;
 }
 
-// Cámbialo para que reciba la prop
 export default function FormRegistroProducto({ abierto, onClose, producto, onRegistroExitoso }: FormRegistroProductoProps) {
     const [categorias, setCategorias] = useState<Categoria[]>([]);
-    const [guardando, setGuardando] = useState(false); // 🔥 Nuevo estado para evitar doble clic
+    const [guardando, setGuardando] = useState(false);
+    
+    // Estado para saber si debemos mantener el modal abierto después de guardar
+    const [mantenerAbierto, setMantenerAbierto] = useState(false);
 
+    // 🔥 Agregamos el campo formato
     const estadoInicial = {
         nombre: "",
+        formato: "", 
         marca: "",
         precio: 0,
         cantidad: 1,
@@ -57,7 +60,6 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
         if (abierto) {
             obtenerCategorias();
         }
-
     }, [abierto]);
 
     useEffect(() => {
@@ -66,6 +68,7 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
 
             setDatosFormulario({
                 nombre: producto.nombre || "",
+                formato: producto.formato || "", // 🔥 Cargamos el formato
                 marca: producto.marca || "",
                 precio: producto.precio || 0,
                 cantidad: producto.cantidad || 1,
@@ -86,9 +89,7 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        // Si ya estamos guardando, ignoramos clics extra (Mata el Bug de productos dobles)
         if (guardando) return;
-
         setGuardando(true);
 
         const idUsuarioLogueado = sessionUser?.profile?.id;
@@ -104,9 +105,9 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
 
         try {
             if (producto) {
-                // 🔥 MODO EDITAR: NO mandamos familia_id ni agregado_por para evitar bloqueos de RLS
                 const datosAActualizar = {
                     nombre: datosFormulario.nombre.trim(),
+                    formato: datosFormulario.formato.trim() || null, // 🔥 Enviamos formato
                     marca: datosFormulario.marca.trim() || null,
                     precio: Number(datosFormulario.precio),
                     cantidad: Number(datosFormulario.cantidad),
@@ -115,7 +116,6 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                     categoria_id: datosFormulario.categoria_id ? datosFormulario.categoria_id.trim() : null,
                 };
 
-                // Agregamos .select() para forzar que nos devuelva lo editado y saber si falló en silencio
                 const { data, error } = await supabase
                     .from('productos')
                     .update(datosAActualizar)
@@ -130,9 +130,9 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 toast.success("¡Producto actualizado!", { id: toastId });
 
             } else {
-                // 🔥 MODO CREAR: Aquí sí mandamos la familia completa
                 const productoParaSupabase = {
                     nombre: datosFormulario.nombre.trim(),
+                    formato: datosFormulario.formato.trim() || null, // 🔥 Enviamos formato
                     marca: datosFormulario.marca.trim() || null,
                     precio: Number(datosFormulario.precio),
                     cantidad: Number(datosFormulario.cantidad),
@@ -152,19 +152,26 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
             }
 
             onRegistroExitoso();
-            onClose();
+
+            // Si pulsó "Añadir otro", limpiamos. Si no, cerramos.
+            if (mantenerAbierto && !producto) {
+                setDatosFormulario(estadoInicial);
+            } else {
+                onClose();
+            }
 
         } catch (error: any) {
             console.error("Error completo:", error);
             toast.error(error.message || "Error al procesar la solicitud", { id: toastId });
         } finally {
-            setGuardando(false); // Liberamos el botón
+            setGuardando(false); 
+            setMantenerAbierto(false); // Reseteamos el estado
         }
     };
 
     return (
         <Dialog open={abierto} onOpenChange={(estaAbierto) => { if (!estaAbierto) onClose(); }}>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[550px]">
                 <DialogHeader>
                     <DialogTitle>{producto ? "Editar Producto" : "Nuevo Producto"}</DialogTitle>
                     <DialogDescription>
@@ -175,19 +182,20 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                    
+                    {/* 🔥 FILA 1: Nombre y Formato */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            {/* 🔥 Cambio 1: Etiqueta más clara */}
-                            <Label htmlFor="nombre">Nombre y Formato</Label>
-                            {/* 🔥 Cambio 2: Placeholder de ejemplo */}
-                            <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} placeholder="Ej. Papel Higiénico (Pack 12)" required disabled={guardando} />
+                            <Label htmlFor="nombre">Nombre</Label>
+                            <Input id="nombre" value={datosFormulario.nombre} onChange={handleChange} placeholder="Ej. Arroz largo" required disabled={guardando} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="marca">Marca (Opcional)</Label>
-                            <Input id="marca" value={datosFormulario.marca} onChange={handleChange} placeholder="Ej. Lidel" disabled={guardando} />
+                            <Label htmlFor="formato">Formato</Label>
+                            <Input id="formato" value={datosFormulario.formato} onChange={handleChange} placeholder="Ej. Kg,L," required disabled={guardando} />
                         </div>
                     </div>
 
+                    {/* 🔥 FILA 2: Cantidad, Stock Min, Precio */}
                     <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="cantidad">Cantidad</Label>
@@ -195,19 +203,23 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="stock_minimo">Stock Mín.</Label>
-                            <Input id="stock_minimo" type="number" min="0" value={datosFormulario.stock_minimo} onChange={handleChange} required disabled={guardando} />
+                            <Input id="stock_minimo" type="number" min="0" value={datosFormulario.stock_minimo} onChange={handleChange} disabled={guardando} />
                         </div>
                         <div className="space-y-2">
-                            {/* 🔥 Cambio 3: Etiqueta de Precio Total */}
                             <Label htmlFor="precio">Precio Total (€)</Label>
                             <Input id="precio" type="number" step="0.01" min="0" value={datosFormulario.precio} onChange={handleChange} disabled={guardando} />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* 🔥 FILA 3: Marca, Vencimiento, Categoría */}
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="marca">Marca</Label>
+                            <Input id="marca" value={datosFormulario.marca} onChange={handleChange} placeholder="Ej. Lidel" disabled={guardando} />
+                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_caducidad">Vencimiento</Label>
-                            <Input id="fecha_caducidad" type="date" value={datosFormulario.fecha_caducidad} onChange={handleChange} required disabled={guardando} />
+                            <Input id="fecha_caducidad" type="date" value={datosFormulario.fecha_caducidad} onChange={handleChange} disabled={guardando} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="categoria_id">Categoría</Label>
@@ -226,13 +238,30 @@ export default function FormRegistroProducto({ abierto, onClose, producto, onReg
                         </div>
                     </div>
 
-                    <Button type="submit" disabled={guardando} className="bg-green-600 text-white w-full mt-2 hover:bg-green-700 disabled:bg-gray-400">
-                        {guardando ? "Guardando..." : (producto ? "Guardar Cambios" : "Guardar en Despensa")}
-                    </Button>
+                    <div className="flex flex-col gap-2 mt-2">
+                        <Button 
+                            type="submit" 
+                            disabled={guardando} 
+                            onClick={() => setMantenerAbierto(false)}
+                            className="bg-green-600 text-white w-full hover:bg-green-700 disabled:bg-gray-400"
+                        >
+                            {guardando ? "Guardando..." : (producto ? "Guardar Cambios" : "Guardar y Cerrar")}
+                        </Button>
+
+                        {!producto && (
+                            <Button 
+                                type="submit" 
+                                variant="outline"
+                                disabled={guardando} 
+                                onClick={() => setMantenerAbierto(true)}
+                                className="w-full border-green-600 text-green-700 hover:bg-green-50"
+                            >
+                                Guardar y añadir otro producto
+                            </Button>
+                        )}
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>
     );
 }
-
-

@@ -10,6 +10,7 @@ import { formatearFecha } from "@/utils/formatear";
 interface ProductoConCategoria {
   id: string;
   nombre: string;
+  formato: string | null; // 🔥 Añadimos formato a la interfaz
   marca: string;
   precio: number;
   cantidad: number;
@@ -35,10 +36,11 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
 
     const cargarProductos = async () => {
       setCargando(true);
+      // 🔥 Añadimos "formato" al select para que Supabase nos lo traiga
       const { data, error } = await supabase
         .from('productos')
         .select(`
-          id, nombre, marca, precio, cantidad, stock_minimo, fecha_caducidad,categoria_id, categorias (nombre)`)
+          id, nombre, formato, marca, precio, cantidad, stock_minimo, fecha_caducidad,categoria_id, categorias (nombre)`)
         .eq('familia_id', sessionUser.profile?.familia_id)
         .order('fecha_caducidad', { ascending: true });
 
@@ -119,8 +121,14 @@ export default function TablaProductos({ onEditarProducto, onEliminarProducto }:
                 key={prod.id}
                 className={getSemaforoColor(prod.cantidad, prod.stock_minimo)}
               >
-                <TableCell className="text-foreground font-medium">
-                  {prod.nombre}
+                {/* 🔥 Nombre y Formato agrupados en la misma celda */}
+                <TableCell>
+                  <div className="text-foreground font-medium">{prod.nombre}</div>
+                  {prod.formato && (
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {prod.formato}
+                    </div>
+                  )}
                 </TableCell>
 
                 <TableCell>
