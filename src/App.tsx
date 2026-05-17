@@ -24,6 +24,7 @@ import PerfilSuperAdmin from "./pages/PerfilSuperAdmin";
 import AdminUserPage from "./pages/AdminUserPage";
 import EstadisticasPage from "./pages/EstadisticasPage";
 import { ThemeProvider } from "./components/ui/theme-provider";
+import ActualizarPassword from "./pages/ActualizarPassword";
 
 
 
@@ -43,6 +44,13 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
     ],
+  },
+
+  {
+    element: <AuthLayout />,
+    children: [
+      { path: "/actualizar-password", element: <ActualizarPassword/> },
+    ]
   },
 
   {
