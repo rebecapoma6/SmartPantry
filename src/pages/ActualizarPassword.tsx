@@ -61,7 +61,7 @@ export default function ActualizarPassword() {
     };
 
     return (
-        <div className="flex justify-center items-center bg-muted/30 min-h-screen p-4">
+        <div className="flex justify-center items-center bg-muted/30 min-h-screen">
             <Card className="w-full max-w-md shadow-lg border-green-100">
                 <CardHeader className="space-y-2 text-center pb-6">
                     <div className="mx-auto bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-2">
