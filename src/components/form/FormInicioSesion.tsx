@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { AppRole } from "@/interfaces/Profile";
-import { supabase } from "@/database/supabase/Client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { KeyRound, Mail } from "lucide-react";
 
