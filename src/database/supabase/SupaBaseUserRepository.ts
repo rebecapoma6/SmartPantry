@@ -5,6 +5,13 @@ import { supabase } from "./Client";
 import { SupabaseStorageRepository } from "./SupabaseStorageRepository";
 
 export class SupaBaseUserRepository implements UserRepository {
+  async resetPasswordForEmail(email: string): Promise<{error?: any;}> {
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      email, {
+      redirectTo: `${window.location.origin}/actualizar-password`
+    });
+    return { error: error || null };
+  }
 
   storageRepository = new SupabaseStorageRepository();
 

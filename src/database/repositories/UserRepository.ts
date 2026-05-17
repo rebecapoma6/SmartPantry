@@ -7,4 +7,5 @@ export interface UserRepository {
     obtenerRolUsuario(userId: string): Promise<{ data?: string | null, error?: any }>
     iniciarSesion(email: string, password: string) : Promise<{ data?: SessionUser; error?: any }>
     cerrarSesion(): Promise<{error?: any }>
+    resetPasswordForEmail(email: string): Promise<{ error?: any }>
 }
