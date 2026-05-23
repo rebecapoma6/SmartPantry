@@ -10,6 +10,11 @@ export const validacionesRegistro = (name: string, value: string, passwordOrigin
       if (!/\S+@\S+\.\S+/.test(value)) return "El formato del correo no es válido";
       return "";
 
+    case "movil":
+      if (!value.trim()) return "El móvil es obligatorio";
+      if (!/^\d{9}$/.test(value)) return "El móvil debe tener exactamente 9 números";
+      return "";
+
     case "password":
       if (!value.trim()) return "La contraseña es obligatoria";
       //if (value.length < 6) return "La contraseña debe tener mínimo 6 caracteres";

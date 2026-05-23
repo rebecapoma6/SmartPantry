@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { AppRole } from "@/interfaces/Profile";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { KeyRound, Mail } from "lucide-react";
+import { KeyRound, Mail, Eye, EyeOff } from "lucide-react"; 
 
 interface FormInicioProps {
   email: string;
@@ -21,7 +21,6 @@ interface ErrorsProps {
   password: string;
 }
 
-
 export default function FormInicioSesion() {
   const navigate = useNavigate();
   const setSession = useAuthStore((state) => state.setSession);
@@ -30,6 +29,8 @@ export default function FormInicioSesion() {
   const [resetEmail, setResetEmail] = useState("");
   const [isResetting, setIsResetting] = useState(false);
   const [modalAbierto, setModalAbierto] = useState(false);
+  
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const [cargando, setCargando] = useState(false);
   const [formInicio, setFormInicio] = useState<FormInicioProps>({
@@ -53,7 +54,6 @@ export default function FormInicioSesion() {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-
   const handleRecuperarPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resetEmail) {
@@ -62,7 +62,7 @@ export default function FormInicioSesion() {
     }
 
     setIsResetting(true);
-   const { error } = await userRepository.resetPasswordForEmail(resetEmail);
+    const { error } = await userRepository.resetPasswordForEmail(resetEmail);
 
     if (error) {
       toast.error("Hubo un error al enviar el enlace.");
@@ -154,23 +154,31 @@ export default function FormInicioSesion() {
       </div>
 
       <div className="space-y-1">
-        {/* 🔥 Aquí quitamos el Link antiguo, solo dejamos el Label limpio */}
         <Label htmlFor="password">Contraseña</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Mínimo 6 caracteres"
-          value={formInicio.password}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className={errors.password ? "border-red-500" : ""}
-          disabled={cargando}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            name="password"
+            type={mostrarPassword ? "text" : "password"}
+            placeholder="Mínimo 6 caracteres"
+            value={formInicio.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+            disabled={cargando}
+          />
+          <button
+            type="button"
+            onClick={() => setMostrarPassword(!mostrarPassword)}
+            className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+            disabled={cargando}
+          >
+            {mostrarPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
         {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
       </div>
 
-      {/* 🔥 Y aquí se queda tu Popup moderno */}
       <div className="flex justify-end mt-1">
         <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
           <DialogTrigger asChild>
