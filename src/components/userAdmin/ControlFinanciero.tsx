@@ -49,7 +49,6 @@ export default function ControlFinanciero() {
         const cargarDatosReales = async () => {
             if (!sessionUser?.profile?.familia_id) return;
 
-            // 🔥 Añadimos "formato" en la consulta a Supabase
             const { data: productos, error } = await supabase
                 .from('productos')
                 .select(`
@@ -68,11 +67,46 @@ export default function ControlFinanciero() {
                 return;
             }
 
-            if (productos && productos.length > 0) {
+            // 🔥 1. CREAMOS NUESTRA DATA FICTICIA PARA LA PRESENTACIÓN DEL 02-06-2026
+            const hoyPrueba = new Date();
+            
+            // Calculamos fechas exactas hacia atrás
+            const hace10Dias = new Date(hoyPrueba); hace10Dias.setDate(hoyPrueba.getDate() - 10);
+            const hace25Dias = new Date(hoyPrueba); hace25Dias.setDate(hoyPrueba.getDate() - 25);
+            const hace40Dias = new Date(hoyPrueba); hace40Dias.setDate(hoyPrueba.getDate() - 40);
+            const marzo = new Date(hoyPrueba.getFullYear(), 2, 15);
+            const febrero = new Date(hoyPrueba.getFullYear(), 1, 10);
+            const enero = new Date(hoyPrueba.getFullYear(), 0, 5);
+
+            const productosFicticios = [
+                { nombre: "Aceite de Oliva Ficticio", formato: "1L", precio: 8.50, cantidad: 3, created_at: hace10Dias.toISOString(), categorias: { nombre: "Despensa" } },
+                { nombre: "Leche Entera", formato: "Pack 6", precio: 5.20, cantidad: 2, created_at: hace10Dias.toISOString(), categorias: { nombre: "Lácteos" } },
+                { nombre: "Detergente Ropa", formato: "3L", precio: 9.99, cantidad: 1, created_at: hace25Dias.toISOString(), categorias: { nombre: "Limpieza" } },
+                { nombre: "Café Molido", formato: "250g", precio: 3.10, cantidad: 4, created_at: hace40Dias.toISOString(), categorias: { nombre: "Despensa" } },
+                { nombre: "Atún Claro", formato: "Pack 3", precio: 3.50, cantidad: 5, created_at: marzo.toISOString(), categorias: { nombre: "Despensa" } },
+                { nombre: "Papel Higiénico", formato: "24 rollos", precio: 6.50, cantidad: 1, created_at: febrero.toISOString(), categorias: { nombre: "Limpieza" } },
+                { nombre: "Galletas María", formato: "800g", precio: 2.10, cantidad: 3, created_at: enero.toISOString(), categorias: { nombre: "Snacks y Dulces" } },
+                { nombre: "Pasta Macarrones", formato: "1kg", precio: 1.15, cantidad: 6, created_at: marzo.toISOString(), categorias: { nombre: "Despensa" } },
+                { nombre: "Agua Mineral", formato: "Garrafa 5L", precio: 1.20, cantidad: 4, created_at: hace25Dias.toISOString(), categorias: { nombre: "Bebidas" } },
+            ];
+
+            // 🔥 2. JUNTAMOS LOS REALES CON LOS FICTICIOS
+            const todosLosProductos = [...(productos || []), ...productosFicticios];
+
+            if (todosLosProductos && todosLosProductos.length > 0) {
                 const hoy = new Date();
 
-                const hace7Dias = new Date(hoy); hace7Dias.setDate(hoy.getDate() - 7);
-                const hace14Dias = new Date(hoy); hace14Dias.setDate(hoy.getDate() - 14);
+                // 🔥 Lógica exacta para semanas calendario (Lunes a Domingo) que arreglamos antes
+                const diaDeLaSemana = hoy.getDay() === 0 ? 7 : hoy.getDay(); 
+                const inicioSemanaActual = new Date(hoy);
+                inicioSemanaActual.setDate(hoy.getDate() - diaDeLaSemana + 1);
+                inicioSemanaActual.setHours(0, 0, 0, 0); 
+
+                const inicioSemanaAnterior = new Date(inicioSemanaActual);
+                inicioSemanaAnterior.setDate(inicioSemanaActual.getDate() - 7); 
+
+                const finSemanaAnterior = new Date(inicioSemanaActual);
+                finSemanaAnterior.setMilliseconds(-1); 
 
                 const mesActual = hoy.getMonth();
                 const anioActual = hoy.getFullYear();
@@ -86,26 +120,25 @@ export default function ControlFinanciero() {
                 let capitalInmovilizado = 0;
 
                 let mapaCategorias = new Map();
-
                 const mesesDelAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
                 const gastosPorMes = mesesDelAnio.map(mes => ({ mes, gasto: 0 }));
 
-                const productosCalculados = productos.map((p: any) => {
+                // 🔥 3. AHORA MAPEARMOS SOBRE "todosLosProductos" EN LUGAR DE "productos"
+                const productosCalculados = todosLosProductos.map((p: any) => {
                     const cantidad = p.cantidad || 0;
                     const precio = p.precio || 0;
                     const valorTotal = precio * cantidad;
                     const fechaIngreso = new Date(p.created_at);
-
                     const nombreCategoria = p.categorias?.nombre || 'Sin Categoría';
 
                     capitalInmovilizado += valorTotal;
 
-                    // Acumulando para la dona
                     if (mapaCategorias.has(nombreCategoria)) {
                         mapaCategorias.set(nombreCategoria, mapaCategorias.get(nombreCategoria) + valorTotal);
                     } else {
                         mapaCategorias.set(nombreCategoria, valorTotal);
                     }
+                    
                     if (fechaIngreso.getFullYear() === anioActual) {
                         gastosPorMes[fechaIngreso.getMonth()].gasto += valorTotal;
                     }
@@ -116,13 +149,12 @@ export default function ControlFinanciero() {
                         acumuladoMesAnterior += valorTotal;
                     }
 
-                    if (fechaIngreso >= hace7Dias) {
+                    if (fechaIngreso >= inicioSemanaActual) {
                         acumuladoSemanaActual += valorTotal;
-                    } else if (fechaIngreso >= hace14Dias && fechaIngreso < hace7Dias) {
+                    } else if (fechaIngreso >= inicioSemanaAnterior && fechaIngreso <= finSemanaAnterior) {
                         acumuladoSemanaAnterior += valorTotal;
                     }
 
-                    // 🔥 Retornamos el formato también
                     return { nombre: p.nombre, formato: p.formato || null, cantidad, valorTotal };
                 });
 
