@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/database/supabase/Client";
 import toast from "react-hot-toast";
-import { Camera, Save, ShieldCheck, User as UserIcon, Home, CheckCircle2, XCircle, Users } from "lucide-react";
+import { Camera, Save, ShieldCheck, User as UserIcon, Home, CheckCircle2, XCircle, Users, Eye, EyeOff } from "lucide-react"; // 🔥 Agregamos Eye y EyeOff
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,14 @@ export default function MiPerfil() {
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
+  const [movilError, setMovilError] = useState("");
+
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
+
+  // 🔥 Estados para el ojito en las contraseñas
+  const [mostrarNuevaPassword, setMostrarNuevaPassword] = useState(false);
+  const [mostrarConfirmarPassword, setMostrarConfirmarPassword] = useState(false);
 
   const updateUserName = useAuthStore((state: any) => state.updateUserName);
   const updateUserAvatar = useAuthStore((state: any) => state.updateUserAvatar);
@@ -28,6 +34,29 @@ export default function MiPerfil() {
   const contrasenasCoinciden = nuevaPassword === confirmarPassword && nuevaPassword.length > 0;
   const mostrarErrorPass = confirmarPassword.length > 0 && nuevaPassword !== confirmarPassword;
   const botonPasswordDeshabilitado = nuevaPassword.length < 6 || !contrasenasCoinciden;
+
+  const validarMovil = (valor: string) => {
+    if (!valor.trim()) {
+      setMovilError("El móvil es obligatorio");
+      return false;
+    }
+    if (!/^\d{9}$/.test(valor)) {
+      setMovilError("El móvil debe tener exactamente 9 números");
+      return false;
+    }
+    setMovilError("");
+    return true;
+  };
+
+  const handleMovilChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value;
+    setMovil(valor);
+    if (movilError) validarMovil(valor);
+  };
+
+  const handleMovilBlur = () => {
+    validarMovil(movil);
+  };
 
   useEffect(() => {
     const cargarPerfil = async () => {
@@ -65,6 +94,11 @@ export default function MiPerfil() {
     e.preventDefault();
     if (!userId) return;
 
+    if (!validarMovil(movil)) {
+      toast.error("Corrige los errores antes de guardar");
+      return;
+    }
+
     const toastId = toast.loading("Actualizando datos...");
     try {
       const { error } = await supabase
@@ -93,7 +127,6 @@ export default function MiPerfil() {
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
 
-      // Con la ruta de la carpeta para respetar tus políticas de Supabase
       const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -153,7 +186,6 @@ export default function MiPerfil() {
     <div className="max-w-6xl mx-auto py-4 px-2">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        {/* COLUMNA IZQUIERDA: IDENTIDAD */}
         <Card className="border border-slate-100 shadow-md overflow-hidden lg:col-span-4 rounded-xl bg-background">
           <div className="h-24 bg-gradient-to-tr from-green-600 via-emerald-500 to-teal-400"></div>
           <CardContent className="px-5 pb-6 relative -mt-12 flex flex-col items-center text-center">
@@ -188,7 +220,6 @@ export default function MiPerfil() {
           </CardContent>
         </Card>
 
-        {/* COLUMNA DERECHA: FORMULARIOS */}
         <div className="lg:col-span-8 space-y-4">
 
           <Card className="shadow-md border-slate-100 rounded-xl overflow-hidden">
@@ -211,10 +242,24 @@ export default function MiPerfil() {
                     <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Nombre Completo</Label>
                     <Input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej. Micaela Pérez" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
                   </div>
+                  
                   <div className="space-y-1.5">
                     <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Teléfono Móvil</Label>
-                    <Input value={movil} onChange={(e) => setMovil(e.target.value)} placeholder="Ej. +34 600 000 000" className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 font-medium text-slate-800 text-sm" />
+                    <div className="relative">
+                      <Input 
+                        value={movil} 
+                        onChange={handleMovilChange} 
+                        onBlur={handleMovilBlur}
+                        placeholder="Ej. 600123456" 
+                        className={`h-9 font-medium text-slate-800 text-sm pr-8 ${movilError ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600'}`} 
+                      />
+                      {!movilError && movil.length === 9 && (
+                        <CheckCircle2 className="absolute right-2.5 top-2.5 h-4 w-4 text-green-500" />
+                      )}
+                    </div>
+                    {movilError && <p className="text-red-500 text-xs mt-1">{movilError}</p>}
                   </div>
+
                 </div>
                 <div className="flex justify-end pt-2 border-t border-slate-100 mt-4">
                   <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white h-9 px-5 text-sm font-semibold shadow-sm transition-all hover:shadow-md">
@@ -240,32 +285,55 @@ export default function MiPerfil() {
             <CardContent className="p-5">
               <form onSubmit={handleActualizarPassword} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  
+                  {/* 🔥 Ojo en Nueva Contraseña */}
                   <div className="space-y-1.5 relative">
                     <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Nueva Contraseña</Label>
-                    <Input
-                      type="password"
-                      value={nuevaPassword}
-                      onChange={(e) => setNuevaPassword(e.target.value)}
-                      placeholder="Mínimo 6 caracteres"
-                      required
-                      className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 text-sm"
-                    />
+                    <div className="relative">
+                      <Input
+                        type={mostrarNuevaPassword ? "text" : "password"}
+                        value={nuevaPassword}
+                        onChange={(e) => setNuevaPassword(e.target.value)}
+                        placeholder="Mínimo 6 caracteres"
+                        required
+                        className="h-9 border-slate-300 focus-visible:ring-green-600 focus-visible:border-green-600 text-sm pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setMostrarNuevaPassword(!mostrarNuevaPassword)}
+                        className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      >
+                        {mostrarNuevaPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                   </div>
+                  
+                  {/* 🔥 Ojo en Confirmar Contraseña */}
                   <div className="space-y-1.5 relative">
                     <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider flex justify-between">
                       Confirmar Contraseña
                       {contrasenasCoinciden && <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Coinciden</span>}
                       {mostrarErrorPass && <span className="text-red-500 flex items-center gap-1"><XCircle className="w-3 h-3" /> No coinciden</span>}
                     </Label>
-                    <Input
-                      type="password"
-                      value={confirmarPassword}
-                      onChange={(e) => setConfirmarPassword(e.target.value)}
-                      placeholder="Repite la contraseña"
-                      required
-                      className={`h-9 text-sm focus-visible:ring-green-600 ${mostrarErrorPass ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300'}`}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={mostrarConfirmarPassword ? "text" : "password"}
+                        value={confirmarPassword}
+                        onChange={(e) => setConfirmarPassword(e.target.value)}
+                        placeholder="Repite la contraseña"
+                        required
+                        className={`h-9 text-sm focus-visible:ring-green-600 pr-10 ${mostrarErrorPass ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-300'}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setMostrarConfirmarPassword(!mostrarConfirmarPassword)}
+                        className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      >
+                        {mostrarConfirmarPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                   </div>
+
                 </div>
                 <div className="flex justify-end pt-2 border-t border-slate-100 mt-4">
                   <Button
